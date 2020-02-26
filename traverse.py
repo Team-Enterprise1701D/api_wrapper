@@ -138,3 +138,36 @@ traversal_graph = Traversal_Graph()  # instantiate
 
 with open(os.path.join(dirname, 'traversal_graph.txt')) as json_file:
     traversal_graph.vertices = json.load(json_file)
+
+init_response = get_init_response()  # invoke init and receive response
+
+traversal_graph.add_vertex(init_response)  # send response to add_vertex method
+
+counter = 0
+start_time = time()
+while len(traversal_graph.vertices) < 500:
+    init_response = get_init_response()
+    exits = init_response['exits']
+    unexplored = [option for option in exits if (
+        traversal_graph.vertices[init_response['room_id']]['exits'][option] == '?')]
+    if len(unexplored) > 0:
+        move = random.choice(unexplored)  # pick an exit at random
+        move_response = make_move(move)  # get response back from move made
+        counter += 1
+        post_move_room_id = move_response['room_id']
+        if post_move_room_id not in traversal_graph.vertices:
+            traversal_graph.add_vertex(move_response)
+            print(
+                f"{len(traversal_graph.vertices)} rooms found in {counter} moves and {time() - start_time} seconds.")
+            with open(os.path.join(dirname, 'traversal_graph.txt'), 'w') as outfile:
+                json.dump(traversal_graph.vertices, outfile)
+        traversal_graph.add_edge(init_response, move_response, move)
+    else:
+        to_unexplored = traversal_graph.bfs_to_unexplored(init_response)
+        for move in to_unexplored:
+            make_move(move)
+            counter += 1
+
+
+with open(os.path.join(dirname, 'traversal_graph_complete.txt'), 'w') as outfile:
+    json.dump(traversal_graph.vertices, outfile)
