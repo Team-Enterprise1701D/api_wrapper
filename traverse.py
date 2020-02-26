@@ -105,4 +105,16 @@ class Traversal_Graph:
                     queue.enqueue(new_path)
 
 
+#  method to get and return the init response when invoked
+def get_init_response():
+    init_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/init/"
+    init_headers = {
+        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+    # convert json to python object
+    init_response = json.loads(requests.get(
+        init_endpoint, headers=init_headers).content)
+    sleep(init_response['cooldown'])
+    return init_response
+
+
 traversal_graph = Traversal_Graph()
