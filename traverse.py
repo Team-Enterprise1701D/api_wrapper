@@ -117,6 +117,11 @@ def get_init_response():
     return init_response
 
 
+'''
+ method to make a move when passed a move direction.  Will sleep based on returned cooldown time to avoid penalty
+'''
+
+
 def make_move(move):
     move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
     move_headers = {"Content-Type": "application/json",
@@ -129,4 +134,7 @@ def make_move(move):
     return move_response
 
 
-traversal_graph = Traversal_Graph()
+traversal_graph = Traversal_Graph()  # instantiate
+
+with open(os.path.join(dirname, 'traversal_graph.txt')) as json_file:
+    traversal_graph.vertices = json.load(json_file)
