@@ -117,4 +117,16 @@ def get_init_response():
     return init_response
 
 
+def make_move(move):
+    move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
+    move_headers = {"Content-Type": "application/json",
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+    move_direction = {"direction": move}
+    move_response = json.loads(requests.post(
+        move_endpoint, data=json.dumps(move_direction), headers=move_headers).content)
+    # sleep for period of time received in move_response
+    sleep(move_response['cooldown'])
+    return move_response
+
+
 traversal_graph = Traversal_Graph()
