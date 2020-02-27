@@ -111,7 +111,7 @@ class Traversal_Graph:
 def get_init_response():
     init_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/init/"
     init_headers = {
-        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}  # probably need a config file here
+        "Authorization": f"Token 5740acca65a9d61760e99fb06308fe18cbf29a3c"}  # probably need a config file here
     # convert json to python object
     init_response = json.loads(requests.get(
         init_endpoint, headers=init_headers).content)
@@ -123,7 +123,7 @@ def get_init_response():
 def make_move(move):
     move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
     move_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}  # and here
+                    "Authorization": f"Token 5740acca65a9d61760e99fb06308fe18cbf29a3c"}  # and here
     move_direction = {"direction": move}
     move_response = json.loads(requests.post(
         move_endpoint, data=json.dumps(move_direction), headers=move_headers).content)
@@ -132,10 +132,14 @@ def make_move(move):
     return move_response
 
 
+# print(get_init_response())
+# print(make_move('s'))
+
 traversal_graph = Traversal_Graph()  # instantiate
 
-with open(os.path.join(dirname, 'traversal_graph.txt')) as json_file:
-    traversal_graph.vertices = json.load(json_file)
+# with open(os.path.join(dirname, 'traversal_graph.txt')) as json_file:
+    # traversal_graph.vertices = json.loads(json_file)
+f = open('traversal_graph.txt', 'a')
 
 init_response = get_init_response()  # invoke init and receive response
 
@@ -164,8 +168,9 @@ while len(traversal_graph.vertices) < 500:
             traversal_graph.add_vertex(move_response)
             print(
                 f"{len(traversal_graph.vertices)} rooms found in {counter} moves and {time() - start_time} seconds.")
-            with open(os.path.join(dirname, 'traversal_graph.txt'), 'w') as outfile:
-                json.dump(traversal_graph.vertices, outfile)
+            # with open(os.path.join(dirname, 'traversal_graph.txt'), 'w') as outfile:
+            #     json.dumps(traversal_graph.vertices, outfile)
+            f.write(f'{traversal_graph.vertices}')
         # connect room came from to room moved to
         traversal_graph.add_edge(init_response, move_response, move)
     else:
@@ -175,5 +180,9 @@ while len(traversal_graph.vertices) < 500:
             counter += 1
 
 
-with open(os.path.join(dirname, 'traversal_graph_complete.txt'), 'w') as outfile:
-    json.dump(traversal_graph.vertices, outfile)
+# with open(os.path.join(dirname, 'traversal_graph_complete.txt'), 'w') as outfile:
+#     json.dumps(traversal_graph.vertices, outfile)
+f.close()
+
+f = open('traversal_graph.txt', 'r')
+print(f)

@@ -1,3 +1,4 @@
+from player import Player
 import random
 
 
@@ -59,13 +60,13 @@ class Graph:
         traveled_path = []
 
         queue = Queue()
-        numQueue = Queue()
+        # numQueue = Queue()
 
         visited = set()
 
         queue.enqueue([starting_room])
         # print('starting_room', starting_room)
-        numQueue.enqueue([starting_room.id])
+        # numQueue.enqueue([starting_room.id])
 
         previous_room = None
 
@@ -74,10 +75,10 @@ class Graph:
         while queue.size() > 0:
 
             path = queue.dequeue()
-            numPath = numQueue.dequeue()
+            # numPath = numQueue.dequeue()
 
             current_room = path[-1]
-            num_curr_room = numPath[-1]
+            # num_curr_room = numPath[-1]
 
             for visit in self.visited[current_room.id]:
                 if self.visited[current_room.id][visit] == '?':
@@ -106,25 +107,25 @@ class Graph:
                     if direction == 'w':
                         player.travel('e')
                     new_path = list(path)
-                    num_path = list(numPath)
+                    # num_path = list(numPath)
                     new_path.append(next_room)
-                    num_path.append(next_room.id)
+                    # num_path.append(next_room.id)
                     queue.enqueue(new_path)
-                    numQueue.enqueue(num_path)
+                    # numQueue.enqueue(num_path)
                 previous_room = current_room
 
-    def reverse_path(self, path):  # PROBABLY DON"T NEED ###
-        temp_path = []
-        for id in range(len(path) - 1):
-            # print(path[id])
-            if path[id] in self.visited:
-                for d in self.visited[path[id]]:
-                    if self.visited[path[id]][d] == path[id + 1]:
+    # def reverse_path(self, path):  # PROBABLY DON"T NEED ###
+    #     temp_path = []
+    #     for id in range(len(path) - 1):
+    #         # print(path[id])
+    #         if path[id] in self.visited:
+    #             for d in self.visited[path[id]]:
+    #                 if self.visited[path[id]][d] == path[id + 1]:
 
-                        temp_path.append(d)
+    #                     temp_path.append(d)
 
-        for d in temp_path:
-            traversal_path.append(d)
+    #     for d in temp_path:
+    #         traversal_path.append(d)
 
     def dft(self, starting_room):
 
@@ -238,7 +239,7 @@ class Graph:
             room = self.dft(start)
             # print('room', room)
             # print('traversal_path',traversal_path)
-            if len(self.visited_rooms) < len(room_graph):
+            if len(self.visited_rooms) < 500:
                 # print('*******************starting bfs*********************************')
                 check = self.bfs(room)
                 # print('test check', check[1])
