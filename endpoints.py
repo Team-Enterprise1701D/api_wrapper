@@ -79,3 +79,24 @@ def sell_item(item):
         sell_endpoint, data=json.dumps(sell_payload), headers=sell_headers).content)
     sleep(sell_response['cooldown'])
     return sell_response
+
+
+def check_status():
+    status_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
+    status_headers = {"Content-Type": "application/json",
+                      "Authorization": f"Token {config('SECRET_KEY')}"}
+    status_response = json.loads(requests.post(
+        status_endpoint, headers=status_headers).content)
+    sleep(status_response['cooldown'])
+    return status_response
+
+
+def change_name(name):
+    change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
+    change_name_headers = {"Content-Type": "application/json",
+                           "Authorization": f"Token {config('SECRET_KEY')}"}
+    change_name_payload = {"name": name}
+    change_name_response = json.loads(requests.post(
+        change_name_endpoint, data=json.dumps(change_name_payload), headers=change_name_headers).content)
+    sleep(change_name_response['cooldown'])
+    return change_name_response
