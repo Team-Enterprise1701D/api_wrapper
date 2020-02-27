@@ -68,3 +68,14 @@ def drop_item(item):
         drop_endpoint, data=json.dumps(drop_payload), headers=drop_headers).content)
     sleep(drop_response['cooldown'])
     return drop_response
+
+
+def sell_item(item):
+    sell_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/"
+    sell_headers = {"Content-Type": "application/json",
+                    "Authorization": f"Token {config('SECRET_KEY')}"}
+    sell_payload = {"name": item, "confirm": "yes"}
+    sell_response = json.loads(requests.post(
+        sell_endpoint, data=json.dumps(sell_payload), headers=sell_headers).content)
+    sleep(sell_response['cooldown'])
+    return sell_response
