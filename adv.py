@@ -114,18 +114,18 @@ class Graph:
                     # numQueue.enqueue(num_path)
                 previous_room = current_room
 
-    # def reverse_path(self, path):  # PROBABLY DON"T NEED ###
-    #     temp_path = []
-    #     for id in range(len(path) - 1):
-    #         # print(path[id])
-    #         if path[id] in self.visited:
-    #             for d in self.visited[path[id]]:
-    #                 if self.visited[path[id]][d] == path[id + 1]:
+    def reverse_path(self, path):  # PROBABLY DON"T NEED ###
+        temp_path = []
+        for id in range(len(path) - 1):
+            # print(path[id])
+            if path[id] in self.visited:
+                for d in self.visited[path[id]]:
+                    if self.visited[path[id]][d] == path[id + 1]:
 
-    #                     temp_path.append(d)
+                        temp_path.append(d)
 
-    #     for d in temp_path:
-    #         traversal_path.append(d)
+        for d in temp_path:
+            traversal_path.append(d)
 
     def dft(self, starting_room):
 
