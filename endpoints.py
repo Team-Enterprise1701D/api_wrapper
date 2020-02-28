@@ -179,3 +179,13 @@ def carry(item):
         carry_endpoint, data=json.dumps(carry_payload), headers=carry_headers).content)
     sleep(carry_response['cooldown'])
     return carry_response
+
+
+def receive():
+    receive_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/receive/"
+    receive_headers = {"Content-Type": "application/json",
+                       "Authorization": f"Token {config('SECRET_KEY')}"}
+    receive_response = json.loads(requests.post(
+        receive_endpoint, headers=receive_headers).content)
+    sleep(receive_response['cooldown'])
+    return receive_response
