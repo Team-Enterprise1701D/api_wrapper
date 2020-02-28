@@ -1,4 +1,3 @@
-from decouple import config
 import requests
 from time import sleep
 import json
@@ -6,7 +5,8 @@ import json
 
 def get_init_response():
     init_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/init"
-    init_headers = {"Authorization": f"Token {config('SECRET_KEY')}"}
+    init_headers = {
+        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     init_response = json.loads(requests.get(
         init_endpoint, headers=init_headers).content)
     sleep(init_response['cooldown'])
@@ -16,7 +16,7 @@ def get_init_response():
 def fly(move, init_response, traversal_graph):
     fly_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/"
     fly_headers = {"Content-Type": "application/json",
-                   "Authorization": f"Token {config('SECRET_KEY')}"}
+                   "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     fly_payload = {"direction": move}
     fly_response = json.loads(requests.post(
         fly_endpoint, data=json.dumps(fly_payload), headers=fly_headers).content)
@@ -31,7 +31,7 @@ def fly(move, init_response, traversal_graph):
 def dash(move, init_response, traversal_graph):
     dash_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/dash/"
     dash_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token {config('SECRET_KEY')}"}
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     move_direction = move[0]
     starting_room = init_response['room_id']
     next_room_ids = []
@@ -63,7 +63,7 @@ def make_wise_move(move, init_response, check_status_response, traversal_graph):
         else:  # make a normal move
             move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
             move_headers = {"Content-Type": "application/json",
-                            "Authorization": f"Token {config('SECRET_KEY')}"}
+                            "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
             move_payload = {"direction": move,
                             "next_room_id": str(next_room_id)}
             move_response = json.loads(requests.post(
@@ -76,7 +76,7 @@ def make_wise_move(move, init_response, check_status_response, traversal_graph):
 def take_item(item):
     take_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/take/"
     take_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token {config('SECRET_KEY')}"}
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     take_payload = {"name": item}
     take_response = json.loads(requests.post(
         take_endpoint, data=json.dumps(take_payload), headers=take_headers).content)
@@ -87,7 +87,7 @@ def take_item(item):
 def drop_item(item):
     drop_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/"
     drop_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token {config('SECRET_KEY')}"}
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     drop_payload = {"name": item}
     drop_response = json.loads(requests.post(
         drop_endpoint, data=json.dumps(drop_payload), headers=drop_headers).content)
@@ -98,7 +98,7 @@ def drop_item(item):
 def sell_item(item):
     sell_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/"
     sell_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token {config('SECRET_KEY')}"}
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     sell_payload = {"name": item, "confirm": "yes"}
     sell_response = json.loads(requests.post(
         sell_endpoint, data=json.dumps(sell_payload), headers=sell_headers).content)
@@ -109,7 +109,7 @@ def sell_item(item):
 def examine_item(item):
     examine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/"
     examine_headers = {"Content-Type": "application/json",
-                       "Authorization": f"Token {config('SECRET_KEY')}"}
+                       "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     examine_payload = {"name": item}
     examine_response = json.loads(requests.post(examine_endpoint, data=json.dumps(
         examine_payload), headers=examine_headers).content)
@@ -120,7 +120,7 @@ def examine_item(item):
 def check_status():
     status_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
     status_headers = {"Content-Type": "application/json",
-                      "Authorization": f"Token {config('SECRET_KEY')}"}
+                      "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     status_response = json.loads(requests.post(
         status_endpoint, headers=status_headers).content)
     sleep(status_response['cooldown'])
@@ -130,7 +130,7 @@ def check_status():
 def change_name(name):
     change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
     change_name_headers = {"Content-Type": "application/json",
-                           "Authorization": f"Token {config('SECRET_KEY')}"}
+                           "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     change_name_payload = {"name": name}
     change_name_response = json.loads(requests.post(
         change_name_endpoint, data=json.dumps(change_name_payload), headers=change_name_headers).content)
@@ -140,7 +140,8 @@ def change_name(name):
 
 def get_last_proof():
     last_proof_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/"
-    last_proof_headers = {"Authorization": f"Token {config('SECRET_KEY')}"}
+    last_proof_headers = {
+        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     last_proof_response = json.loads(requests.get(
         last_proof_endpoint, headers=last_proof_headers).content)
     sleep(last_proof_response['cooldown'])
@@ -150,7 +151,7 @@ def get_last_proof():
 def mine(proof):
     mine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/"
     mine_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token {config('SECRET_KEY')}"}
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     mine_payload = {"proof": proof}
     mine_response = json.loads(requests.post(
         mine_endpoint, data=json.dumps(mine_payload), headers=mine_headers).content)
@@ -161,7 +162,7 @@ def mine(proof):
 def get_lambda_coin_balance():
     lambda_coin_balance_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/"
     lambda_coin_balance_headers = {
-        "Authorization": f"Token {config('SECRET_KEY')}"}
+        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     lambda_coin_balance_response = json.loads(requests.get(
         lambda_coin_balance_endpoint, headers=lambda_coin_balance_headers).content)
     sleep(lambda_coin_balance_response['cooldown'])
@@ -171,7 +172,7 @@ def get_lambda_coin_balance():
 def pray():
     pray_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/"
     pray_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token {config('SECRET_KEY')}"}
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     pray_response = json.loads(requests.post(
         pray_endpoint, headers=pray_headers).content)
     sleep(pray_response['cooldown'])
@@ -181,7 +182,7 @@ def pray():
 def recall():
     recall_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/recall/"
     recall_headers = {"Content-Type": "application/json",
-                      "Authorization": f"Token {config('SECRET_KEY')}"}
+                      "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     recall_response = json.loads(requests.post(
         recall_endpoint, headers=recall_headers).content)
     sleep(recall_response['cooldown'])
@@ -191,7 +192,7 @@ def recall():
 def carry(item):
     carry_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/carry/"
     carry_headers = {"Content-Type": "application/json",
-                     "Authorization": f"Token {config('SECRET_KEY')}"}
+                     "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     carry_payload = {"name": item}
     carry_response = json.loads(requests.post(
         carry_endpoint, data=json.dumps(carry_payload), headers=carry_headers).content)
@@ -202,7 +203,7 @@ def carry(item):
 def receive():
     receive_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/receive/"
     receive_headers = {"Content-Type": "application/json",
-                       "Authorization": f"Token {config('SECRET_KEY')}"}
+                       "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     receive_response = json.loads(requests.post(
         receive_endpoint, headers=receive_headers).content)
     sleep(receive_response['cooldown'])
@@ -212,7 +213,7 @@ def receive():
 def wear(item):
     wear_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/wear/"
     wear_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token {config('SECRET_KEY')}"}
+                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     wear_payload = {"name": item}
     wear_response = json.loads(requests.post(
         wear_endpoint, data=json.dumps(wear_payload), headers=wear_headers).content)
@@ -223,7 +224,7 @@ def wear(item):
 def undress(item):
     undress_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/undress/"
     undress_headers = {"Content-Type": "application/json",
-                       "Authorization": f"Token {config('SECRET_KEY')}"}
+                       "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     undress_payload = {"name": item}
     undress_response = json.loads(requests.post(undress_endpoint, data=json.dumps(
         undress_payload), headers=undress_headers).content)
@@ -234,7 +235,7 @@ def undress(item):
 def transmogrify(item):
     transmogrify_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/transmogrify/"
     transmogrify_headers = {"Content-Type": "application/json",
-                            "Authorization": f"Token {config('SECRET_KEY')}"}
+                            "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     transmogrify_payload = {"name": item}
     transmogrify_response = json.loads(requests.post(transmogrify_endpoint, data=json.dumps(
         transmogrify_payload), headers=transmogrify_headers).content)
