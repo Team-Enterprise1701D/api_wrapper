@@ -189,3 +189,14 @@ def receive():
         receive_endpoint, headers=receive_headers).content)
     sleep(receive_response['cooldown'])
     return receive_response
+
+
+def wear(item):
+    wear_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/wear/"
+    wear_headers = {"Content-Type": "application/json",
+                    "Authorization": f"Token {config('SECRET_KEY')}"}
+    wear_payload = {"name": item}
+    wear_response = json.loads(requests.post(
+        wear_endpoint, data=json.dumps(wear_payload), headers=wear_headers).content)
+    sleep(wear_response['cooldown'])
+    return wear_response
