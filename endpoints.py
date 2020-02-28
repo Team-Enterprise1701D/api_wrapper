@@ -62,7 +62,6 @@ def make_wise_move(move, init_response, check_status_response, traversal_graph):
             fly(move, init_response, traversal_graph)
         else:  # make a normal move
             move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
-            # move_endpoint = "http://127.0.0.1:8000/api/adv/move/"
             move_headers = {"Content-Type": "application/json",
                             "Authorization": f"Token {config('SECRET_KEY')}"}
             move_payload = {"direction": move,
