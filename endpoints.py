@@ -81,6 +81,17 @@ def sell_item(item):
     return sell_response
 
 
+def examine_item(item):
+    examine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/"
+    examine_headers = {"Content-Type": "application/json",
+                       "Authorization": f"Token {config('SECRET_KEY')}"}
+    examine_payload = {"name": item}
+    examine_response = json.loads(requests.post(examine_endpoint, data=json.dumps(
+        examine_payload), headers=examine_headers).content)
+    sleep(examine_response['cooldown'])
+    return examine_response
+
+
 def check_status():
     status_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
     status_headers = {"Content-Type": "application/json",
