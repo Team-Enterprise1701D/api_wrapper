@@ -230,3 +230,14 @@ def undress(item):
         undress_payload), headers=undress_headers).content)
     sleep(undress_response['cooldown'])
     return undress_response
+
+
+def transmogrify(item):
+    transmogrify_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/transmogrify/"
+    transmogrify_headers = {"Content-Type": "application/json",
+                            "Authorization": f"Token {config('SECRET_KEY')}"}
+    transmogrify_payload = {"name": item}
+    transmogrify_response = json.loads(requests.post(transmogrify_endpoint, data=json.dumps(
+        transmogrify_payload), headers=transmogrify_headers).content)
+    sleep(transmogrify_response['cooldown'])
+    return transmogrify_response
