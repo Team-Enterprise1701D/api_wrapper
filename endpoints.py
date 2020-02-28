@@ -48,6 +48,32 @@ def dash(move, init_response, traversal_graph):
     return dash_response
 
 
+def make_wise_move(move, init_response, check_status_response, traversal_graph):
+    # if 'move' is a list of moves and 'dash' is in our list of abilities > dash
+    if ('dash' in check_status_response['abilities']) and (type(move) == list):
+        dash(move, init_response, traversal_graph)
+    else:
+        next_room_id = traversal_graph.vertices[init_response['room_id']]['exits'][move]
+        current_elevation = init_response['elevation']
+        next_room_elevation = traversal_graph.vertices[next_room_id]['elevation']
+        elevation_change = next_room_elevation - current_elevation
+        # if going from a higher elevation to a lower elevation then 'fly'
+        if ('fly' in check_status_response['abilities']) and (elevation_change < 0):
+            fly(move, init_response, traversal_graph)
+        else:  # make a normal move
+            move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
+            # move_endpoint = "http://127.0.0.1:8000/api/adv/move/"
+            move_headers = {"Content-Type": "application/json",
+                            "Authorization": f"Token {config('SECRET_KEY')}"}
+            move_payload = {"direction": move,
+                            "next_room_id": str(next_room_id)}
+            move_response = json.loads(requests.post(
+                move_endpoint, data=json.dumps(move_payload), headers=move_headers).content)
+            print(move_response['messages'])
+            sleep(move_response['cooldown'])
+            return move_response
+
+
 def take_item(item):
     take_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/take/"
     take_headers = {"Content-Type": "application/json",
