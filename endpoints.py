@@ -111,3 +111,14 @@ def change_name(name):
         change_name_endpoint, data=json.dumps(change_name_payload), headers=change_name_headers).content)
     sleep(change_name_response['cooldown'])
     return change_name_response
+
+
+def mine(proof):
+    mine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/"
+    mine_headers = {"Content-Type": "application/json",
+                    "Authorization": f"Token {config('SECRET_KEY')}"}
+    mine_payload = {"proof": proof}
+    mine_response = json.loads(requests.post(
+        mine_endpoint, data=json.dumps(mine_payload), headers=mine_headers).content)
+    sleep(mine_response['cooldown'])
+    return mine_response
