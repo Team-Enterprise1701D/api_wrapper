@@ -87,11 +87,24 @@ def make_move(move):
     sleep(move_response['cooldown'])
     return move_response
 
+def make_wise_move(move, room):
+    move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
+    move_headers = {"Content-Type": "application/json",
+                    "Authorization": f"Token 5740acca65a9d61760e99fb06308fe18cbf29a3c"}  # and here
+    move_direction = {"direction": move, "next_room_id": room}
+    move_response = json.loads(requests.post(
+        move_endpoint, data=json.dumps(move_direction), headers=move_headers).content)
+    # sleep for period of time received in move_response
+    sleep(move_response['cooldown'])
+    return move_response
+
 trav = Traversal()
 
-current_path = trav.bfs_back_to_room_0(starting_room, 0)
+current_path = trav.bfs_back_to_room_0(19, 0)
 moves = trav.reverse_path(current_path)
 print('traversal_path',traversal_path)
 
-for move in traversal_path:
-    make_move(move)
+for idx in range(len(traversal_path)):
+    # print(traversal_path[idx])
+    # print(current_path[idx + 1])
+    make_wise_move(traversal_path[idx],f'{current_path[idx + 1]}' )

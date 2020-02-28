@@ -97,6 +97,7 @@ class Traversal_Graph:
 
 
     def dft_to_unexplored(self):
+        print('*********************starting dft**********************')
         # get whatever room your are starting your dft in.
         init_response = get_init_response() 
         #create a stack
@@ -109,6 +110,7 @@ class Traversal_Graph:
         move = None
         #this way i set the direction to whatever the last diection is gone on the stack
         direction = None
+        previous_init = None
         while stack.size() > 0:
             # pull the first room out of the stack
             print('count', count)
@@ -116,12 +118,9 @@ class Traversal_Graph:
             print('current_room', current_room)
             #get the previous room that the player is currently in before you move them to the room you just popped off.
             response = get_init_response()
+            print('previous_init', previous_init)
             print('response', response)
             # if it is the not first time through the loop move the plaer to the current room from the stack.
-            if count > 0:
-                # move the player to the current room
-                move = make_move(direction)
-                print('move', move)
 
             # check to see if the popped off room is in self.vertices dict.
             if current_room not in self.vertices:
@@ -136,7 +135,9 @@ class Traversal_Graph:
                     # add room into the vertices dictionary of rooms.
                     self.add_vertex(move)
                     # add the room connection forwards and backwards.
-                    self.add_edge(response, move, direction)
+                    self.add_edge(previous_init, move, direction)
+                    print('*************checking edges added correctly**************')
+                    print(self.vertices[current_room]['exits'])
                     #add to text file
                     # f.write(f'{traversal_graph.vertices}')
             # add to the count to keep track of when a player can move.
@@ -169,18 +170,11 @@ class Traversal_Graph:
             direction = random.choice(unexplored)
             print('direction', direction)
             # set the next room to be the room you travel to.
-            next_room = make_move(direction)
-            # then move back so that when the loop starts over you are in the correct room
-            if direction == 'n':
-                make_move('s')
-            if direction == 's':
-                make_move('n')
-            if direction == 'e':
-                make_move('w')
-            if direction == 'w':
-                make_move('e')
+            previous_init = response
+            move = make_move(direction)
+
             # put the next room on the stack.
-            stack.push(next_room['room_id'])
+            stack.push(move['room_id'])
             
             
         
@@ -221,8 +215,9 @@ class Traversal_Graph:
                     new_path.append(self.vertices[current_room]['exits'][edge])
                     queue.enqueue(new_path)
 
-    def reverse_path(self, path):  # PROBABLY DON"T NEED ###
+    def reverse_travel(self, path):  # PROBABLY DON"T NEED ###
         temp_path = []
+        print('*******************traveling back to closest room with unexplored exit')
         for id in range(len(path) - 1):
             # print(path[id])
             if path[id] in self.vertices:
@@ -232,14 +227,20 @@ class Traversal_Graph:
                     if self.vertices[path[id]]['exits'][d] == path[id + 1]:
 
                         temp_path.append(d)
-        print('return path', temp_path)
-        return temp_path
+        print('reverse travel path', temp_path)
+        for idx in range(len(temp_path)):
+            make_wise_move(temp_path[idx], f'{path[idx +1]}')
     
-    def travel_the_graph(self, starting_room):
-        start = starting_room
+    def travel_the_graph(self):
         guess = False
         while guess == False:
-            guess = treasure
+            print(f'there are {len(self.vertices)} rooms visited')
+            guess = True
+            room = self.dft_to_unexplored()
+            if len(self.vertices) < 499:
+                path = self.bfs_backtrack(room)
+                self.reverse_travel(path)
+                guess = False
 
        
 
@@ -268,6 +269,17 @@ def make_move(move):
     sleep(move_response['cooldown'])
     return move_response
 
+def make_wise_move(move, room):
+    move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
+    move_headers = {"Content-Type": "application/json",
+                    "Authorization": f"Token 5740acca65a9d61760e99fb06308fe18cbf29a3c"}  # and here
+    move_direction = {"direction": move, "next_room_id": room}
+    move_response = json.loads(requests.post(
+        move_endpoint, data=json.dumps(move_direction), headers=move_headers).content)
+    # sleep for period of time received in move_response
+    sleep(move_response['cooldown'])
+    return move_response
+
 
 
 traversal_graph = Traversal_Graph()  # instantiate
@@ -276,53 +288,13 @@ f = open('traversal_graph.txt', 'a')
 
 # init_response = get_init_response()  # invoke init and receive response
 
-room = traversal_graph.dft_to_unexplored()
-traversal_graph.bfs_backtrack(room)
+traversal_graph.travel_the_graph()
 print('the amount of rooms vsisted on first dft pass', len(traversal_graph.vertices))
+print('finished traversal')
 
 
-# traversal_graph.add_vertex(init_response)  # send response to add_vertex method
 
-# counter = 0
-# start_time = time()
-# while len(traversal_graph.vertices) < 500:
-#     # get room data for romm I am in
-#     init_response = get_init_response()
-#     # get exits for room I am in
-#     exits = init_response['exits']
-#     # build array for unexplord exits
-#     unexplored = [option for option in exits if (
-#         traversal_graph.vertices[init_response['room_id']]['exits'][option] == '?')]
-#     # for each unexplored exit
-#     print('unexplored', unexplored)
-#     if len(unexplored) > 0:
-#         # pick an exit at random
-#         move = random.choice(unexplored)
-#         print('move', move)
-#         # get response back from move made
-#         move_response = make_move(move)
-#         print('move_response', move_response)
-#         counter += 1
-#         # get room id of room moved to
-#         post_move_room_id = move_response['room_id']
-#         print('post_move_room_id', post_move_room_id)
-#         if post_move_room_id not in traversal_graph.vertices:
-#             traversal_graph.add_vertex(move_response)
-#             print(
-#                 f"{len(traversal_graph.vertices)} rooms found in {counter} moves and {time() - start_time} seconds.")
-#             # with open(os.path.join(dirname, 'traversal_graph.txt'), 'w') as outfile:
-#             #     json.dumps(traversal_graph.vertices, outfile)
-#             f.write(f'{traversal_graph.vertices}')
-#         # connect room came from to room moved to
-#         traversal_graph.add_edge(init_response, move_response, move)
-#     else:
-#         to_unexplored = traversal_graph.bfs_to_unexplored(init_response)
-#         print('to_unexplored', to_unexplored)
-#         for move in to_unexplored:
-#             make_move(move)
-#             counter += 1
-
-print('traversal_graph', traversal_graph.vertices)
+# print('traversal_graph', traversal_graph.vertices)
 f.write(f'{traversal_graph.vertices}')
 f.close()
 
