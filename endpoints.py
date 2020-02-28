@@ -148,3 +148,13 @@ def mine(proof):
         mine_endpoint, data=json.dumps(mine_payload), headers=mine_headers).content)
     sleep(mine_response['cooldown'])
     return mine_response
+
+
+def pray():
+    pray_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/"
+    pray_headers = {"Content-Type": "application/json",
+                    "Authorization": f"Token {config('SECRET_KEY')}"}
+    pray_response = json.loads(requests.post(
+        pray_endpoint, headers=pray_headers).content)
+    sleep(pray_response['cooldown'])
+    return pray_response
