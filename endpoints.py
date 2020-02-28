@@ -25,7 +25,7 @@ def fly(move, init_response, traversal_graph):
     return fly_response
 
 
-# move needs to be an array of directions (i.e. [n, e, n, w, e] etc) from the starting room to the ending room
+# dash move needs to be an array of directions (i.e. [n, e, n, w, e] etc) from the starting room to the ending room
 
 
 def dash(move, init_response, traversal_graph):
