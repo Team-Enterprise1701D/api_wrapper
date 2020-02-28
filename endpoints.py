@@ -159,6 +159,16 @@ def mine(proof):
     return mine_response
 
 
+def get_lambda_coin_balance():
+    lambda_coin_balance_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/"
+    lambda_coin_balance_headers = {
+        "Authorization": f"Token {config('SECRET_KEY')}"}
+    lambda_coin_balance_response = json.loads(requests.get(
+        lambda_coin_balance_endpoint, headers=lambda_coin_balance_headers).content)
+    sleep(lambda_coin_balance_response['cooldown'])
+    return lambda_coin_balance_response
+
+
 def pray():
     pray_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/"
     pray_headers = {"Content-Type": "application/json",
