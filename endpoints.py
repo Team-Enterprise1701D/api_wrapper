@@ -158,3 +158,13 @@ def pray():
         pray_endpoint, headers=pray_headers).content)
     sleep(pray_response['cooldown'])
     return pray_response
+
+
+def recall():
+    recall_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/recall/"
+    recall_headers = {"Content-Type": "application/json",
+                      "Authorization": f"Token {config('SECRET_KEY')}"}
+    recall_response = json.loads(requests.post(
+        recall_endpoint, headers=recall_headers).content)
+    sleep(recall_response['cooldown'])
+    return recall_response
