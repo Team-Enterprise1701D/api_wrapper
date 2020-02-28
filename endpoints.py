@@ -200,3 +200,14 @@ def wear(item):
         wear_endpoint, data=json.dumps(wear_payload), headers=wear_headers).content)
     sleep(wear_response['cooldown'])
     return wear_response
+
+
+def undress(item):
+    undress_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/undress/"
+    undress_headers = {"Content-Type": "application/json",
+                       "Authorization": f"Token {config('SECRET_KEY')}"}
+    undress_payload = {"name": item}
+    undress_response = json.loads(requests.post(undress_endpoint, data=json.dumps(
+        undress_payload), headers=undress_headers).content)
+    sleep(undress_response['cooldown'])
+    return undress_response
