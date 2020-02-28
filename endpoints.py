@@ -139,6 +139,15 @@ def change_name(name):
     return change_name_response
 
 
+def get_last_proof():
+    last_proof_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/"
+    last_proof_headers = {"Authorization": f"Token {config('SECRET_KEY')}"}
+    last_proof_response = json.loads(requests.get(
+        last_proof_endpoint, headers=last_proof_headers).content)
+    sleep(last_proof_response['cooldown'])
+    return last_proof_response
+
+
 def mine(proof):
     mine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/"
     mine_headers = {"Content-Type": "application/json",
