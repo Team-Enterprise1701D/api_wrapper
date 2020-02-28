@@ -168,3 +168,14 @@ def recall():
         recall_endpoint, headers=recall_headers).content)
     sleep(recall_response['cooldown'])
     return recall_response
+
+
+def carry(item):
+    carry_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/carry/"
+    carry_headers = {"Content-Type": "application/json",
+                     "Authorization": f"Token {config('SECRET_KEY')}"}
+    carry_payload = {"name": item}
+    carry_response = json.loads(requests.post(
+        carry_endpoint, data=json.dumps(carry_payload), headers=carry_headers).content)
+    sleep(carry_response['cooldown'])
+    return carry_response
