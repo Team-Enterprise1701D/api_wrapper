@@ -31,28 +31,25 @@ class Traversal_Graph:
     def get_neighbors(self, room_id):
         return set(self.vertices[room_id]['exits'].values())
 
+    '''
+    bfs takes 3 args: 
+        1. init_response of the room you are in
+        2. key_to_search is the attribute of the room you are searching
+            a. room_id
+            b. title (Room Name)
+            c. item or description
+        3. value_to_search - (i.e. room#, 'shrine', 'treasure'. It can also be a set if looking for more than one value
+    '''
 
-'''
-bfs takes 3 args:
-    1. init_response of the room you are in
-    2. key_to_search is the attribute of the room you are searching
-        a. room_id
-        b. title (Room Name)
-        c. item or description
-    3. value_to_search - (i.e. room#, 'shrine', 'treasure'. It can also be a set if looking for more than one value
-'''
-
-
-def bfs(self, init_response, key_to_search, value_to_search):
-    queue = Queue()
-    queue.enqueue([init_response['room_id']])
-    visited = set()
-    while queue.size() > 0:
-        path = queue.dequeue()
-         vertex = path[-1]
-          if vertex not in visited:
-               if key_to_search == 'room_id':
-
+    def bfs(self, init_response, key_to_search, value_to_search):
+        queue = Queue()
+        queue.enqueue([init_response['room_id']])
+        visited = set()
+        while queue.size() > 0:
+            path = queue.dequeue()
+            vertex = path[-1]
+            if vertex not in visited:
+                if key_to_search == 'room_id':
                     # if looking for more than one room
                     if type(value_to_search) == set:
                         if vertex in value_to_search:
