@@ -2,6 +2,7 @@ import requests
 import json
 from time import sleep, time
 from map_rooms import island_map
+import hashlib
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
 my_name = 'Arpita Sinha'
@@ -532,6 +533,47 @@ def examineItemInCurrentRoom():
     examine_response = examine_item("WELL")
     print(f'EXAMINE RESPONSE: {examine_response}')
 
+def goToRoom(destinationRoom):
+    init_response = get_init_response()
+    print("Init response : ", init_response)
+
+    check_status_response = check_status()
+    print("Current status ", check_status_response)
+
+    counter = 0
+    to_room = traversal_graph.bfs(init_response, 'room_id', destinationRoom)
+    for move in to_room:
+        # make move
+        make_wise_move(move, init_response,
+                       check_status_response, traversal_graph)
+        counter += 1
+        print(f'{counter} moves made.')  # to let me know it's running!
+        init_response = get_init_response()
+
+    init_response = get_init_response()
+    print("Init response : ", init_response)
+
+
+def find_next_proof(last_proof, difficulty_level):
+    proof = 1
+    while True:
+        # print("Try proof", proof)
+        # h = hash((last_proof, proof))
+        guess = f'{last_proof}{proof}'.encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        if guess_hash[:difficulty_level] == "0"*difficulty_level:
+            break
+        proof += 1
+
+
+    print("Found proof ", guess_hash, proof)
+    print("Mine response",mine(proof))
+
 # find_wishing_well(traversal_graph)
 # takeItemFromCurrentRoom()
-examineItemInCurrentRoom()
+# examineItemInCurrentRoom()
+
+# goToRoom(397)
+last_proof = get_last_proof()
+print("Got last proof as ", last_proof)
+find_next_proof(last_proof["proof"], last_proof["difficulty"])
