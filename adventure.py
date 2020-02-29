@@ -1,7 +1,6 @@
 import requests
 import json
 from time import sleep, time
-import os
 from map_rooms import island_map
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
@@ -362,35 +361,34 @@ def transmogrify(item):
 traversal_graph = Traversal_Graph()
 traversal_graph.vertices = island_map
 
+# def find_shrines(traversal_graph):
+#     init_response = get_init_response()
+#     check_status_response = check_status()
+#     shrines = set()
+#     # first get a set of the locations of all shrines
+#     for vertex in traversal_graph.vertices:
+#         if 'shrine' in traversal_graph.vertices[vertex]['description']:
+#             shrines.add(vertex)
 
-def find_shrines(traversal_graph):
-    init_response = get_init_response()
-    check_status_response = check_status()
-    shrines = set()
-    # first get a set of the locations of all shrines
-    for vertex in traversal_graph.vertices:
-        if 'shrine' in traversal_graph.vertices[vertex]['description']:
-            shrines.add(vertex)
-
-    while len(shrines) > 0:
-        counter = 0
-        # now pass shrine set to our bfs method to search
-        to_shrine = traversal_graph.bfs(init_response, 'room_id', shrines)
-        for move in to_shrine:
-            # make move
-            make_wise_move(move, init_response,
-                           check_status_response, traversal_graph)
-            counter += 1
-            print(f'{counter} moves made.')  # to let me know it's running!
-            init_response = get_init_response()
-            traversal_graph.vertices[init_response['room_id']
-                                     ]['items'] = init_response['items']
-        if 'shrine' in init_response['description']:
-            pray_response = pray()
-            print(f"PRAY RESPONSE: {pray_response}")
-            check_status_response = check_status()
-            print(f'CHECK STATUS RESPONSE: {check_status_response}')
-            shrines.remove(init_response['room_id'])
+#     while len(shrines) > 0:
+#         counter = 0
+#         # now pass shrine set to our bfs method to search
+#         to_shrine = traversal_graph.bfs(init_response, 'room_id', shrines)
+#         for move in to_shrine:
+#             # make move
+#             make_wise_move(move, init_response,
+#                            check_status_response, traversal_graph)
+#             counter += 1
+#             print(f'{counter} moves made.')  # to let me know it's running!
+#             init_response = get_init_response()
+#             traversal_graph.vertices[init_response['room_id']
+#                                      ]['items'] = init_response['items']
+#         if 'shrine' in init_response['description']:
+#             pray_response = pray()
+#             print(f"PRAY RESPONSE: {pray_response}")
+#             check_status_response = check_status()
+#             print(f'CHECK STATUS RESPONSE: {check_status_response}')
+#             shrines.remove(init_response['room_id'])
 
 
-find_shrines(traversal_graph)
+# find_shrines(traversal_graph)
