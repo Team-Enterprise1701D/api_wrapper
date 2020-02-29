@@ -481,4 +481,57 @@ def find_shrines(traversal_graph):
             shrines.remove(init_response['room_id'])
 
 
-find_shrines(traversal_graph)
+# find_shrines(traversal_graph)
+
+def find_wishing_well(traversal_graph):
+    init_response = get_init_response()
+    check_status_response = check_status()
+    wishing_well =  None
+    # first get a set of the locations of all shrines
+    for vertex in traversal_graph.vertices:
+        if 'Wishing' in traversal_graph.vertices[vertex]['title']:
+            wishing_well  = vertex
+            break
+
+    if not wishing_well:
+        print("Could not find wishing well")
+        return
+
+    print("Look for wihshing well ", wishing_well)
+    to_wishing_well = traversal_graph.bfs(init_response, 'room_id', wishing_well)
+    counter = 0
+    for move in to_wishing_well:
+        # make move
+        make_wise_move(move, init_response,
+                       check_status_response, traversal_graph)
+        counter += 1
+        print(f'{counter} moves made.')  # to let me know it's running!
+        init_response = get_init_response()
+        traversal_graph.vertices[init_response['room_id']]['items'] = init_response['items']
+
+# find_wishing_well(traversal_graph)
+print ("New Status", check_status())
+
+def takeItemFromCurrentRoom():
+    init_response = get_init_response()
+    print("Init response : ", init_response)
+    check_status_response = check_status()
+    print("Current status ", check_status_response)
+
+    for item in init_response['items']:
+        print("Taking item : ", item)
+        take_item(item)
+
+def examineItemInCurrentRoom():
+    init_response = get_init_response()
+    print("Init response : ", init_response)
+    check_status_response = check_status()
+    print("Current status ", check_status_response)
+
+    #'EXAMINE WELL, FIND WEALTH', So examine "WELL"
+    examine_response = examine_item("WELL")
+    print(f'EXAMINE RESPONSE: {examine_response}')
+
+# find_wishing_well(traversal_graph)
+# takeItemFromCurrentRoom()
+examineItemInCurrentRoom()
