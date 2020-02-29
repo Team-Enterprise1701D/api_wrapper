@@ -4,8 +4,8 @@ from time import sleep, time
 from map_rooms import island_map
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
-my_name = 'Brett Madrid'
-
+my_name = 'Arpita Sinha'
+token = "Token 2f170a09159612077977efdf09d2a1968321f1a1"
 
 class Queue():
     def __init__(self):
@@ -120,7 +120,7 @@ class Traversal_Graph:
 def get_init_response():
     init_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/init"
     init_headers = {
-        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+        "Authorization": token}
     init_response = json.loads(requests.get(
         init_endpoint, headers=init_headers).content)
     sleep(init_response['cooldown'])
@@ -130,7 +130,7 @@ def get_init_response():
 def fly(move, init_response, traversal_graph):
     fly_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/"
     fly_headers = {"Content-Type": "application/json",
-                   "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                   "Authorization": token}
     fly_payload = {"direction": move}
     fly_response = json.loads(requests.post(
         fly_endpoint, data=json.dumps(fly_payload), headers=fly_headers).content)
@@ -145,7 +145,7 @@ def fly(move, init_response, traversal_graph):
 def dash(move, init_response, traversal_graph):
     dash_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/dash/"
     dash_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                    "Authorization":token}
     move_direction = move[0]
     starting_room = init_response['room_id']
     next_room_ids = []
@@ -177,7 +177,7 @@ def make_wise_move(move, init_response, check_status_response, traversal_graph):
         else:  # make a normal move
             move_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
             move_headers = {"Content-Type": "application/json",
-                            "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                            "Authorization": token}
             move_payload = {"direction": move,
                             "next_room_id": str(next_room_id)}
             move_response = json.loads(requests.post(
@@ -190,7 +190,7 @@ def make_wise_move(move, init_response, check_status_response, traversal_graph):
 def take_item(item):
     take_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/take/"
     take_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                    "Authorization": token}
     take_payload = {"name": item}
     take_response = json.loads(requests.post(
         take_endpoint, data=json.dumps(take_payload), headers=take_headers).content)
@@ -201,7 +201,7 @@ def take_item(item):
 def drop_item(item):
     drop_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/"
     drop_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                    "Authorization": token}
     drop_payload = {"name": item}
     drop_response = json.loads(requests.post(
         drop_endpoint, data=json.dumps(drop_payload), headers=drop_headers).content)
@@ -212,7 +212,7 @@ def drop_item(item):
 def sell_item(item):
     sell_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/"
     sell_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                    "Authorization": token}
     sell_payload = {"name": item, "confirm": "yes"}
     sell_response = json.loads(requests.post(
         sell_endpoint, data=json.dumps(sell_payload), headers=sell_headers).content)
@@ -223,7 +223,7 @@ def sell_item(item):
 def examine_item(item):
     examine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/"
     examine_headers = {"Content-Type": "application/json",
-                       "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                       "Authorization": token}
     examine_payload = {"name": item}
     examine_response = json.loads(requests.post(examine_endpoint, data=json.dumps(
         examine_payload), headers=examine_headers).content)
@@ -234,7 +234,7 @@ def examine_item(item):
 def check_status():
     status_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
     status_headers = {"Content-Type": "application/json",
-                      "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                      "Authorization": token}
     status_response = json.loads(requests.post(
         status_endpoint, headers=status_headers).content)
     sleep(status_response['cooldown'])
@@ -242,9 +242,9 @@ def check_status():
 
 
 def change_name(name):
-    change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
+    change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/"
     change_name_headers = {"Content-Type": "application/json",
-                           "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                           "Authorization":token}
     change_name_payload = {"name": name, "confirm": "aye"}
     change_name_response = json.loads(requests.post(
         change_name_endpoint, data=json.dumps(change_name_payload), headers=change_name_headers).content)
@@ -255,7 +255,7 @@ def change_name(name):
 def get_last_proof():
     last_proof_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/"
     last_proof_headers = {
-        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+        "Authorization": token}
     last_proof_response = json.loads(requests.get(
         last_proof_endpoint, headers=last_proof_headers).content)
     sleep(last_proof_response['cooldown'])
@@ -265,7 +265,7 @@ def get_last_proof():
 def mine(proof):
     mine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/"
     mine_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                    "Authorization": token}
     mine_payload = {"proof": proof}
     mine_response = json.loads(requests.post(
         mine_endpoint, data=json.dumps(mine_payload), headers=mine_headers).content)
@@ -276,7 +276,7 @@ def mine(proof):
 def get_lambda_coin_balance():
     lambda_coin_balance_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/"
     lambda_coin_balance_headers = {
-        "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+        "Authorization": token}
     lambda_coin_balance_response = json.loads(requests.get(
         lambda_coin_balance_endpoint, headers=lambda_coin_balance_headers).content)
     sleep(lambda_coin_balance_response['cooldown'])
@@ -286,7 +286,7 @@ def get_lambda_coin_balance():
 def pray():
     pray_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/"
     pray_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                    "Authorization": token}
     pray_response = json.loads(requests.post(
         pray_endpoint, headers=pray_headers).content)
     sleep(pray_response['cooldown'])
@@ -296,7 +296,7 @@ def pray():
 def recall():
     recall_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/recall/"
     recall_headers = {"Content-Type": "application/json",
-                      "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                      "Authorization": token}
     recall_response = json.loads(requests.post(
         recall_endpoint, headers=recall_headers).content)
     sleep(recall_response['cooldown'])
@@ -306,7 +306,7 @@ def recall():
 def carry(item):
     carry_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/carry/"
     carry_headers = {"Content-Type": "application/json",
-                     "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                     "Authorization": token}
     carry_payload = {"name": item}
     carry_response = json.loads(requests.post(
         carry_endpoint, data=json.dumps(carry_payload), headers=carry_headers).content)
@@ -317,7 +317,7 @@ def carry(item):
 def receive():
     receive_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/receive/"
     receive_headers = {"Content-Type": "application/json",
-                       "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                       "Authorization": token}
     receive_response = json.loads(requests.post(
         receive_endpoint, headers=receive_headers).content)
     sleep(receive_response['cooldown'])
@@ -327,7 +327,7 @@ def receive():
 def wear(item):
     wear_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/wear/"
     wear_headers = {"Content-Type": "application/json",
-                    "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                    "Authorization": token}
     wear_payload = {"name": item}
     wear_response = json.loads(requests.post(
         wear_endpoint, data=json.dumps(wear_payload), headers=wear_headers).content)
@@ -338,7 +338,7 @@ def wear(item):
 def undress(item):
     undress_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/undress/"
     undress_headers = {"Content-Type": "application/json",
-                       "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                       "Authorization": token}
     undress_payload = {"name": item}
     undress_response = json.loads(requests.post(undress_endpoint, data=json.dumps(
         undress_payload), headers=undress_headers).content)
@@ -349,7 +349,7 @@ def undress(item):
 def transmogrify(item):
     transmogrify_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/transmogrify/"
     transmogrify_headers = {"Content-Type": "application/json",
-                            "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
+                            "Authorization": token}
     transmogrify_payload = {"name": item}
     transmogrify_response = json.loads(requests.post(transmogrify_endpoint, data=json.dumps(
         transmogrify_payload), headers=transmogrify_headers).content)
@@ -359,126 +359,126 @@ def transmogrify(item):
 
 traversal_graph = Traversal_Graph()
 traversal_graph.vertices = island_map
-
-check_status_response = check_status()
-print(f'CHECK STATUS RESPONSE: {check_status_response}')
-name = check_status_response['name']
-gold = check_status_response['gold']
-encumbrance = check_status_response['encumbrance']
-init_response = get_init_response()
-traversal_graph.vertices[init_response['room_id']
-                         ]['items'] = init_response['items']
-
-counter = 0
-start_time = time()
-# until I get my new name
-while name != my_name:
-    # while I don't have enought to buy my new name
-    while gold < 1000:
-        # I can only carry so much at a time
-        while encumbrance < 7:
-            # bfs lookng for path to rooms with 'small treasure'
-            to_treasure = traversal_graph.bfs(
-                init_response, 'items', 'small treasure')
-            for move in to_treasure:
-                make_wise_move(move, init_response,
-                               check_status_response, traversal_graph)
-                counter += 1
-                print(f'{counter} moves made in {time() - start_time} seconds.')
-                init_response = get_init_response()
-                traversal_graph.vertices[init_response['room_id']
-                                         ]['items'] = init_response['items']
-                # for each item in room
-                for item in init_response['items']:
-                    # if item contains 'treasure'
-                    if 'treasure' in item:
-                        # examine it
-                        examine_response = examine_item(item)
-                        print(f'EXAMINE RESPONSE: {examine_response}')
-                        # take it
-                        take_item_response = take_item(item)
-                        init_response = get_init_response()
-                        traversal_graph.vertices[init_response['room_id']
-                                                 ]['items'] = init_response['items']
-                        check_status_response = check_status()
-                        print(
-                            f'CHECK STATUS RESPONSE: {check_status_response}')
-                        # make sure it's not too much to carry
-                        encumbrance = check_status_response['encumbrance']
-                        # if so, break and go sell at the shop
-                        if encumbrance >= 7:
-                            break
-                if encumbrance >= 7:
-                    break
-        # get path to shop
-        to_shop = traversal_graph.bfs(init_response, 'title', 'Shop')
-        for move in to_shop:
-            make_wise_move(move, init_response,
-                           check_status_response, traversal_graph)
-            counter += 1
-            print(f'{counter} moves made in {time() - start_time} seconds.')
-            init_response = get_init_response()
-            traversal_graph.vertices[init_response['room_id']
-                                     ]['items'] = init_response['items']
-        # when arrived at the shop...
-        if init_response['title'] == 'Shop':
-            check_status_response = check_status()
-            for item in check_status_response['inventory']:
-                # for all items that are 'treasure'
-                if 'treasure' in item:
-                    sell_item_response = sell_item(item)
-                    print(f'SELL ITEM RESPONSE: {sell_item_response}')
-                    check_status_response = check_status()
-                    print(f'CHECK STATUS RESPONSE: {check_status_response}')
-                    gold = check_status_response['gold']
-                    encumbrance = check_status_response['encumbrance']
-    # now that I have enough gold, on to name_changer
-    to_name_changer = traversal_graph.bfs(
-        init_response, 'description', "change_name")
-    for move in to_name_changer:
-        make_wise_move(move, init_response,
-                       check_status_response, traversal_graph)
-        counter += 1
-        print(f'{counter} moves made in {time() - start_time} seconds.')
-        init_response = get_init_response()
-        traversal_graph.vertices[init_response['room_id']
-                                 ]['items'] = init_response['items']
-    # if successfully changed name, print new status
-    if "change_name" in init_response['description']:
-        change_name_response = change_name(my_name)
-        print(f"CHANGE NAME RESPONSE: {change_name_response}")
-        check_status_response = check_status()
-        print(f'CHECK STATUS RESPONSE: {check_status_response}')
-
-
-# def find_shrines(traversal_graph):
-#     init_response = get_init_response()
-#     check_status_response = check_status()
-#     shrines = set()
-#     # first get a set of the locations of all shrines
-#     for vertex in traversal_graph.vertices:
-#         if 'shrine' in traversal_graph.vertices[vertex]['description']:
-#             shrines.add(vertex)
-
-#     while len(shrines) > 0:
-#         counter = 0
-#         # now pass shrine set to our bfs method to search
-#         to_shrine = traversal_graph.bfs(init_response, 'room_id', shrines)
-#         for move in to_shrine:
-#             # make move
+#I am commenting this section
+# check_status_response = check_status()
+# print(f'CHECK STATUS RESPONSE: {check_status_response}')
+# name = check_status_response['name']
+# gold = check_status_response['gold']
+# encumbrance = check_status_response['encumbrance']
+# init_response = get_init_response()
+# traversal_graph.vertices[init_response['room_id']
+#                          ]['items'] = init_response['items']
+#
+# counter = 0
+# start_time = time()
+# # until I get my new name
+# while name != my_name:
+#     # while I don't have enought to buy my new name
+#     while gold < 1000:
+#         # I can only carry so much at a time
+#         while encumbrance < 7:
+#             # bfs lookng for path to rooms with 'small treasure'
+#             to_treasure = traversal_graph.bfs(
+#                 init_response, 'items', 'small treasure')
+#             for move in to_treasure:
+#                 make_wise_move(move, init_response,
+#                                check_status_response, traversal_graph)
+#                 counter += 1
+#                 print(f'{counter} moves made in {time() - start_time} seconds.')
+#                 init_response = get_init_response()
+#                 traversal_graph.vertices[init_response['room_id']
+#                                          ]['items'] = init_response['items']
+#                 # for each item in room
+#                 for item in init_response['items']:
+#                     # if item contains 'treasure'
+#                     if 'treasure' in item:
+#                         # examine it
+#                         examine_response = examine_item(item)
+#                         print(f'EXAMINE RESPONSE: {examine_response}')
+#                         # take it
+#                         take_item_response = take_item(item)
+#                         init_response = get_init_response()
+#                         traversal_graph.vertices[init_response['room_id']
+#                                                  ]['items'] = init_response['items']
+#                         check_status_response = check_status()
+#                         print(
+#                             f'CHECK STATUS RESPONSE: {check_status_response}')
+#                         # make sure it's not too much to carry
+#                         encumbrance = check_status_response['encumbrance']
+#                         # if so, break and go sell at the shop
+#                         if encumbrance >= 7:
+#                             break
+#                 if encumbrance >= 7:
+#                     break
+#         # get path to shop
+#         to_shop = traversal_graph.bfs(init_response, 'title', 'Shop')
+#         for move in to_shop:
 #             make_wise_move(move, init_response,
 #                            check_status_response, traversal_graph)
 #             counter += 1
-#             print(f'{counter} moves made.')  # to let me know it's running!
+#             print(f'{counter} moves made in {time() - start_time} seconds.')
 #             init_response = get_init_response()
 #             traversal_graph.vertices[init_response['room_id']
 #                                      ]['items'] = init_response['items']
-#         if 'shrine' in init_response['description']:
-#             pray_response = pray()
-#             print(f"PRAY RESPONSE: {pray_response}")
+#         # when arrived at the shop...
+#         if init_response['title'] == 'Shop':
 #             check_status_response = check_status()
-#             print(f'CHECK STATUS RESPONSE: {check_status_response}')
-#             shrines.remove(init_response['room_id'])
+#             for item in check_status_response['inventory']:
+#                 # for all items that are 'treasure'
+#                 if 'treasure' in item:
+#                     sell_item_response = sell_item(item)
+#                     print(f'SELL ITEM RESPONSE: {sell_item_response}')
+#                     check_status_response = check_status()
+#                     print(f'CHECK STATUS RESPONSE: {check_status_response}')
+#                     gold = check_status_response['gold']
+#                     encumbrance = check_status_response['encumbrance']
+#     # now that I have enough gold, on to name_changer
+#     to_name_changer = traversal_graph.bfs(
+#         init_response, 'description', "change_name")
+#     for move in to_name_changer:
+#         make_wise_move(move, init_response,
+#                        check_status_response, traversal_graph)
+#         counter += 1
+#         print(f'{counter} moves made in {time() - start_time} seconds.')
+#         init_response = get_init_response()
+#         traversal_graph.vertices[init_response['room_id']
+#                                  ]['items'] = init_response['items']
+#     # if successfully changed name, print new status
+#     if "change_name" in init_response['description']:
+#         change_name_response = change_name(my_name)
+#         print(f"CHANGE NAME RESPONSE: {change_name_response}")
+#         check_status_response = check_status()
+#         print(f'CHECK STATUS RESPONSE: {check_status_response}')
+#
+
+def find_shrines(traversal_graph):
+    init_response = get_init_response()
+    check_status_response = check_status()
+    shrines = set()
+    # first get a set of the locations of all shrines
+    for vertex in traversal_graph.vertices:
+        if 'shrine' in traversal_graph.vertices[vertex]['description']:
+            shrines.add(vertex)
+
+    while len(shrines) > 0:
+        counter = 0
+        # now pass shrine set to our bfs method to search
+        to_shrine = traversal_graph.bfs(init_response, 'room_id', shrines)
+        for move in to_shrine:
+            # make move
+            make_wise_move(move, init_response,
+                           check_status_response, traversal_graph)
+            counter += 1
+            print(f'{counter} moves made.')  # to let me know it's running!
+            init_response = get_init_response()
+            traversal_graph.vertices[init_response['room_id']
+                                     ]['items'] = init_response['items']
+        if 'shrine' in init_response['description']:
+            pray_response = pray()
+            print(f"PRAY RESPONSE: {pray_response}")
+            check_status_response = check_status()
+            print(f'CHECK STATUS RESPONSE: {check_status_response}')
+            shrines.remove(init_response['room_id'])
 
 
-# find_shrines(traversal_graph)
+find_shrines(traversal_graph)
