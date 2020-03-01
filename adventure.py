@@ -1,6 +1,7 @@
 import requests
 import json
 from time import sleep, time
+import random
 from map_rooms import island_map
 import hashlib
 
@@ -367,6 +368,15 @@ def examine_item(item):
     sleep(examine_response['cooldown'])
     return examine_response
 
+def get_lambda_coin_balance():
+    lambda_coin_balance_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/"
+    lambda_coin_balance_headers = {
+        "Authorization": token}
+    lambda_coin_balance_response = json.loads(requests.get(
+        lambda_coin_balance_endpoint, headers=lambda_coin_balance_headers).content)
+    sleep(lambda_coin_balance_response['cooldown'])
+    return lambda_coin_balance_response
+
 
 traversal_graph = Traversal_Graph()
 traversal_graph.vertices = island_map
@@ -504,8 +514,6 @@ def find_wishing_well(traversal_graph):
     for vertex in traversal_graph.vertices:
         if 'Wishing' in traversal_graph.vertices[vertex]['title']:
             wishing_well  = vertex
-            wish_response = examine_item("WELL")
-            print(f'CHECK WELL RESPONSE: {wish_response}')
             break
 
     if not wishing_well:
@@ -523,6 +531,13 @@ def find_wishing_well(traversal_graph):
         print(f'{counter} moves made.')  # to let me know it's running!
         init_response = get_init_response()
         traversal_graph.vertices[init_response['room_id']]['items'] = init_response['items']
+    wish_response = examine_item("WELL")
+    description = wish_response['description']
+    print(f'CHECK WELL RESPONSE: {wish_response}')
+    print(f'getting room returned: {description}')
+    room_to_mine = description.split()[-1]
+    print(f'room to mine: {room_to_mine}')
+    return int(room_to_mine)
 
 # find_wishing_well(traversal_graph)
 print ("New Status", check_status())
@@ -569,19 +584,29 @@ def goToRoom(destinationRoom):
 
 
 def find_next_proof(last_proof, difficulty_level):
-    proof = 1
-    while True:
-        # print("Try proof", proof)
-        # h = hash((last_proof, proof))
-        guess = f'{last_proof}{proof}'.encode()
-        guess_hash = hashlib.sha256(guess).hexdigest()
-        if guess_hash[:difficulty_level] == "0"*difficulty_level:
-            break
-        proof += 1
+    guess_check = 0
+    while guess_check == 0:
+        proof = random.randint(0, 9999999999999999)
+        while True:
+            # print("Try proof", proof)
+            # h = hash((last_proof, proof))
+            guess = f'{last_proof}{proof}'.encode()
+            guess_hash = hashlib.sha256(guess).hexdigest()
+            if guess_hash[:difficulty_level] == "0"*difficulty_level:
+                break
+            proof += 1
+        
+        mine_response = mine(proof)
+        print("Found proof ", guess_hash, proof)
+        print("Mine response", mine_response)
+        if len(mine_response['errors']) > 0:
+            print('Sleeping...')
+            sleep(mine_response['cooldown'])
+            print('Continuing to mine...')
+        elif mine_response['messages'][0] == 'New Block Forged':
+            guess_check = 1
 
-
-    print("Found proof ", guess_hash, proof)
-    print("Mine response",mine(proof))
+    return get_lambda_coin_balance()
 
 # find_wishing_well(traversal_graph)
 # takeItemFromCurrentRoom()
@@ -591,3 +616,19 @@ def find_next_proof(last_proof, difficulty_level):
 # last_proof = get_last_proof()
 # print("Got last proof as ", last_proof)
 # find_next_proof(last_proof["proof"], last_proof["difficulty"])
+
+def continuous_mining(traversal_graph):
+    count = 0
+    start_time = time()
+    while True:
+        print(f"{count} lambda coins found in {time() - start_time} seconds")
+        room_to_mine = find_wishing_well(traversal_graph)
+        goToRoom(room_to_mine)
+        last_proof = get_last_proof()
+        print("Got last proof as ", last_proof)
+        mine_response = find_next_proof(last_proof["proof"], last_proof["difficulty"])
+        print(f'Response from mining: {mine_response}')
+        count +=1
+
+continuous_mining(traversal_graph)
+# print(get_lambda_coin_balance())
