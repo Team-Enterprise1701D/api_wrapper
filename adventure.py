@@ -5,8 +5,8 @@ from map_rooms import island_map
 import hashlib
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
-my_name = 'Arpita Sinha'
-token = "Token 2f170a09159612077977efdf09d2a1968321f1a1"
+my_name = 'Hannah Tuttle'
+token = "Token 5740acca65a9d61760e99fb06308fe18cbf29a3c"
 
 class Queue():
     def __init__(self):
@@ -357,10 +357,22 @@ def transmogrify(item):
     sleep(transmogrify_response['cooldown'])
     return transmogrify_response
 
+def examine_item(item):
+    examine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/"
+    examine_headers = {"Content-Type": "application/json",
+                       "Authorization": token}
+    examine_payload = {"name": item}
+    examine_response = json.loads(requests.post(examine_endpoint, data=json.dumps(
+        examine_payload), headers=examine_headers).content)
+    sleep(examine_response['cooldown'])
+    return examine_response
+
 
 traversal_graph = Traversal_Graph()
 traversal_graph.vertices = island_map
+
 #I am commenting this section
+
 # check_status_response = check_status()
 # print(f'CHECK STATUS RESPONSE: {check_status_response}')
 # name = check_status_response['name']
@@ -369,7 +381,7 @@ traversal_graph.vertices = island_map
 # init_response = get_init_response()
 # traversal_graph.vertices[init_response['room_id']
 #                          ]['items'] = init_response['items']
-#
+
 # counter = 0
 # start_time = time()
 # # until I get my new name
@@ -450,7 +462,7 @@ traversal_graph.vertices = island_map
 #         print(f"CHANGE NAME RESPONSE: {change_name_response}")
 #         check_status_response = check_status()
 #         print(f'CHECK STATUS RESPONSE: {check_status_response}')
-#
+
 
 def find_shrines(traversal_graph):
     init_response = get_init_response()
@@ -492,13 +504,15 @@ def find_wishing_well(traversal_graph):
     for vertex in traversal_graph.vertices:
         if 'Wishing' in traversal_graph.vertices[vertex]['title']:
             wishing_well  = vertex
+            wish_response = examine_item("WELL")
+            print(f'CHECK WELL RESPONSE: {wish_response}')
             break
 
     if not wishing_well:
         print("Could not find wishing well")
         return
 
-    print("Look for wihshing well ", wishing_well)
+    print("Look for wishing well ", wishing_well)
     to_wishing_well = traversal_graph.bfs(init_response, 'room_id', wishing_well)
     counter = 0
     for move in to_wishing_well:
@@ -573,7 +587,7 @@ def find_next_proof(last_proof, difficulty_level):
 # takeItemFromCurrentRoom()
 # examineItemInCurrentRoom()
 
-# goToRoom(397)
-last_proof = get_last_proof()
-print("Got last proof as ", last_proof)
-find_next_proof(last_proof["proof"], last_proof["difficulty"])
+# goToRoom(55)
+# last_proof = get_last_proof()
+# print("Got last proof as ", last_proof)
+# find_next_proof(last_proof["proof"], last_proof["difficulty"])
