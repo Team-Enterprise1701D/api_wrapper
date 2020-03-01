@@ -242,7 +242,7 @@ def check_status():
 
 
 def change_name(name):
-    change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/status/"
+    change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/"
     change_name_headers = {"Content-Type": "application/json",
                            "Authorization": f"Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"}
     change_name_payload = {"name": name, "confirm": "aye"}
