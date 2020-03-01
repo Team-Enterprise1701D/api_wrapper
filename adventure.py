@@ -583,9 +583,14 @@ def goToRoom(destinationRoom):
     print("Init response : ", init_response)
 
 
-def find_next_proof(last_proof, difficulty_level):
+def find_next_proof():
     guess_check = 0
+
     while guess_check == 0:
+        get_proof = get_last_proof()
+        print("Got last proof as ", get_proof)
+        last_proof = get_proof["proof"]
+        difficulty_level = get_proof["difficulty"]
         proof = random.randint(0, 9999999999999999)
         while True:
             # print("Try proof", proof)
@@ -615,7 +620,7 @@ def find_next_proof(last_proof, difficulty_level):
 # goToRoom(55)
 # last_proof = get_last_proof()
 # print("Got last proof as ", last_proof)
-# find_next_proof(last_proof["proof"], last_proof["difficulty"])
+# find_next_proof()
 
 def continuous_mining(traversal_graph):
     count = 0
@@ -624,9 +629,9 @@ def continuous_mining(traversal_graph):
         print(f"{count} lambda coins found in {time() - start_time} seconds")
         room_to_mine = find_wishing_well(traversal_graph)
         goToRoom(room_to_mine)
-        last_proof = get_last_proof()
-        print("Got last proof as ", last_proof)
-        mine_response = find_next_proof(last_proof["proof"], last_proof["difficulty"])
+        # last_proof = get_last_proof()
+        # print("Got last proof as ", last_proof)
+        mine_response = find_next_proof()
         print(f'Response from mining: {mine_response}')
         count +=1
 
