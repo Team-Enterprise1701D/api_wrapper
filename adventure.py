@@ -3,10 +3,12 @@ import json
 from time import sleep, time
 from map_rooms import island_map
 import hashlib
+import random
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
-my_name = 'Arpita Sinha'
-token = "Token 2f170a09159612077977efdf09d2a1968321f1a1"
+my_name = '[Brett Madrid]'
+token = "Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"
+
 
 class Queue():
     def __init__(self):
@@ -146,7 +148,7 @@ def fly(move, init_response, traversal_graph):
 def dash(move, init_response, traversal_graph):
     dash_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/dash/"
     dash_headers = {"Content-Type": "application/json",
-                    "Authorization":token}
+                    "Authorization": token}
     move_direction = move[0]
     starting_room = init_response['room_id']
     next_room_ids = []
@@ -245,7 +247,7 @@ def check_status():
 def change_name(name):
     change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/"
     change_name_headers = {"Content-Type": "application/json",
-                           "Authorization":token}
+                           "Authorization": token}
     change_name_payload = {"name": name, "confirm": "aye"}
     change_name_response = json.loads(requests.post(
         change_name_endpoint, data=json.dumps(change_name_payload), headers=change_name_headers).content)
@@ -360,7 +362,7 @@ def transmogrify(item):
 
 traversal_graph = Traversal_Graph()
 traversal_graph.vertices = island_map
-#I am commenting this section
+# I am commenting this section
 # check_status_response = check_status()
 # print(f'CHECK STATUS RESPONSE: {check_status_response}')
 # name = check_status_response['name']
@@ -452,6 +454,7 @@ traversal_graph.vertices = island_map
 #         print(f'CHECK STATUS RESPONSE: {check_status_response}')
 #
 
+
 def find_shrines(traversal_graph):
     init_response = get_init_response()
     check_status_response = check_status()
@@ -487,19 +490,24 @@ def find_shrines(traversal_graph):
 def find_wishing_well(traversal_graph):
     init_response = get_init_response()
     check_status_response = check_status()
-    wishing_well =  None
+    wishing_well = None
     # first get a set of the locations of all shrines
     for vertex in traversal_graph.vertices:
         if 'Wishing' in traversal_graph.vertices[vertex]['title']:
-            wishing_well  = vertex
+            wishing_well = vertex
+            wish_response = examine_item("WELL")
+            print(f'CHECK WELL RESPONSE: {wish_response}')
+            wish_description = wish_response["description"]
+            return wish_description[-3:]
             break
 
     if not wishing_well:
         print("Could not find wishing well")
         return
 
-    print("Look for wihshing well ", wishing_well)
-    to_wishing_well = traversal_graph.bfs(init_response, 'room_id', wishing_well)
+    print("Look for wishing well ", wishing_well)
+    to_wishing_well = traversal_graph.bfs(
+        init_response, 'room_id', wishing_well)
     counter = 0
     for move in to_wishing_well:
         # make move
@@ -508,10 +516,13 @@ def find_wishing_well(traversal_graph):
         counter += 1
         print(f'{counter} moves made.')  # to let me know it's running!
         init_response = get_init_response()
-        traversal_graph.vertices[init_response['room_id']]['items'] = init_response['items']
+        traversal_graph.vertices[init_response['room_id']
+                                 ]['items'] = init_response['items']
+
 
 # find_wishing_well(traversal_graph)
-print ("New Status", check_status())
+print("New Status", check_status())
+
 
 def takeItemFromCurrentRoom():
     init_response = get_init_response()
@@ -523,15 +534,17 @@ def takeItemFromCurrentRoom():
         print("Taking item : ", item)
         take_item(item)
 
+
 def examineItemInCurrentRoom():
     init_response = get_init_response()
     print("Init response : ", init_response)
     check_status_response = check_status()
     print("Current status ", check_status_response)
 
-    #'EXAMINE WELL, FIND WEALTH', So examine "WELL"
+    # 'EXAMINE WELL, FIND WEALTH', So examine "WELL"
     examine_response = examine_item("WELL")
     print(f'EXAMINE RESPONSE: {examine_response}')
+
 
 def goToRoom(destinationRoom):
     init_response = get_init_response()
@@ -555,25 +568,37 @@ def goToRoom(destinationRoom):
 
 
 def find_next_proof(last_proof, difficulty_level):
-    proof = 1
     while True:
-        # print("Try proof", proof)
-        # h = hash((last_proof, proof))
-        guess = f'{last_proof}{proof}'.encode()
-        guess_hash = hashlib.sha256(guess).hexdigest()
-        if guess_hash[:difficulty_level] == "0"*difficulty_level:
+        while True:
+            proof = random.randint(0, 9999999999)
+            guess = f'{last_proof}{proof}'.encode()
+            guess_hash = hashlib.sha256(guess).hexdigest()
+            if guess_hash[:difficulty_level] == "0"*difficulty_level:
+                break
+
+        print(f'NEW PROOF: {proof}')
+        mine_response = mine(proof)
+        print(f'MINE RESPONSE: {mine_response}')
+        if len(mine_response['errors']) > 0:
+            sleep(mine_response["cooldown"])
+            continue
+        elif mine_response['messages'][0] == 'New Block Forged':
             break
-        proof += 1
+
+    lambda_coin_balance_response = get_lambda_coin_balance()
+    print(f'LAMBDA COIN BALANCE RESPONSE: {lambda_coin_balance_response}')
+    check_status_response = check_status()
+    print(f'CHECK STATUS RESPONSE: {check_status_response}')
 
 
-    print("Found proof ", guess_hash, proof)
-    print("Mine response",mine(proof))
-
-# find_wishing_well(traversal_graph)
+# room_to_mine = find_wishing_well(traversal_graph)
 # takeItemFromCurrentRoom()
 # examineItemInCurrentRoom()
 
-# goToRoom(397)
-last_proof = get_last_proof()
-print("Got last proof as ", last_proof)
-find_next_proof(last_proof["proof"], last_proof["difficulty"])
+
+# goToRoom(room_to_mine)
+
+last_proof_response = get_last_proof()
+difficulty = last_proof_response["difficulty"]
+proof = last_proof_response["proof"]
+find_next_proof(proof, difficulty)
