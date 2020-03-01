@@ -1,12 +1,13 @@
 import requests
 import json
 from time import sleep, time
+import random
 from map_rooms import island_map
 import hashlib
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
-my_name = 'Arpita Sinha'
-token = "Token 2f170a09159612077977efdf09d2a1968321f1a1"
+my_name = 'Hannah Tuttle'
+token = "Token 5740acca65a9d61760e99fb06308fe18cbf29a3c"
 
 class Queue():
     def __init__(self):
@@ -357,10 +358,31 @@ def transmogrify(item):
     sleep(transmogrify_response['cooldown'])
     return transmogrify_response
 
+def examine_item(item):
+    examine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/"
+    examine_headers = {"Content-Type": "application/json",
+                       "Authorization": token}
+    examine_payload = {"name": item}
+    examine_response = json.loads(requests.post(examine_endpoint, data=json.dumps(
+        examine_payload), headers=examine_headers).content)
+    sleep(examine_response['cooldown'])
+    return examine_response
+
+def get_lambda_coin_balance():
+    lambda_coin_balance_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/"
+    lambda_coin_balance_headers = {
+        "Authorization": token}
+    lambda_coin_balance_response = json.loads(requests.get(
+        lambda_coin_balance_endpoint, headers=lambda_coin_balance_headers).content)
+    sleep(lambda_coin_balance_response['cooldown'])
+    return lambda_coin_balance_response
+
 
 traversal_graph = Traversal_Graph()
 traversal_graph.vertices = island_map
+
 #I am commenting this section
+
 # check_status_response = check_status()
 # print(f'CHECK STATUS RESPONSE: {check_status_response}')
 # name = check_status_response['name']
@@ -369,7 +391,7 @@ traversal_graph.vertices = island_map
 # init_response = get_init_response()
 # traversal_graph.vertices[init_response['room_id']
 #                          ]['items'] = init_response['items']
-#
+
 # counter = 0
 # start_time = time()
 # # until I get my new name
@@ -450,7 +472,7 @@ traversal_graph.vertices = island_map
 #         print(f"CHANGE NAME RESPONSE: {change_name_response}")
 #         check_status_response = check_status()
 #         print(f'CHECK STATUS RESPONSE: {check_status_response}')
-#
+
 
 def find_shrines(traversal_graph):
     init_response = get_init_response()
@@ -498,7 +520,7 @@ def find_wishing_well(traversal_graph):
         print("Could not find wishing well")
         return
 
-    print("Look for wihshing well ", wishing_well)
+    print("Look for wishing well ", wishing_well)
     to_wishing_well = traversal_graph.bfs(init_response, 'room_id', wishing_well)
     counter = 0
     for move in to_wishing_well:
@@ -509,6 +531,13 @@ def find_wishing_well(traversal_graph):
         print(f'{counter} moves made.')  # to let me know it's running!
         init_response = get_init_response()
         traversal_graph.vertices[init_response['room_id']]['items'] = init_response['items']
+    wish_response = examine_item("WELL")
+    description = wish_response['description']
+    print(f'CHECK WELL RESPONSE: {wish_response}')
+    print(f'getting room returned: {description}')
+    room_to_mine = description.split()[-1]
+    print(f'room to mine: {room_to_mine}')
+    return int(room_to_mine)
 
 # find_wishing_well(traversal_graph)
 print ("New Status", check_status())
@@ -554,26 +583,57 @@ def goToRoom(destinationRoom):
     print("Init response : ", init_response)
 
 
-def find_next_proof(last_proof, difficulty_level):
-    proof = 1
-    while True:
-        # print("Try proof", proof)
-        # h = hash((last_proof, proof))
-        guess = f'{last_proof}{proof}'.encode()
-        guess_hash = hashlib.sha256(guess).hexdigest()
-        if guess_hash[:difficulty_level] == "0"*difficulty_level:
-            break
-        proof += 1
+def find_next_proof():
+    guess_check = 0
 
+    while guess_check == 0:
+        get_proof = get_last_proof()
+        print("Got last proof as ", get_proof)
+        last_proof = get_proof["proof"]
+        difficulty_level = get_proof["difficulty"]
+        proof = random.randint(0, 9999999999999999)
+        while True:
+            # print("Try proof", proof)
+            # h = hash((last_proof, proof))
+            guess = f'{last_proof}{proof}'.encode()
+            guess_hash = hashlib.sha256(guess).hexdigest()
+            if guess_hash[:difficulty_level] == "0"*difficulty_level:
+                break
+            proof += 1
+        
+        mine_response = mine(proof)
+        print("Found proof ", guess_hash, proof)
+        print("Mine response", mine_response)
+        if len(mine_response['errors']) > 0:
+            print('Sleeping...')
+            sleep(mine_response['cooldown'])
+            print('Continuing to mine...')
+        elif mine_response['messages'][0] == 'New Block Forged':
+            guess_check = 1
 
-    print("Found proof ", guess_hash, proof)
-    print("Mine response",mine(proof))
+    return get_lambda_coin_balance()
 
 # find_wishing_well(traversal_graph)
 # takeItemFromCurrentRoom()
 # examineItemInCurrentRoom()
 
-# goToRoom(397)
-last_proof = get_last_proof()
-print("Got last proof as ", last_proof)
-find_next_proof(last_proof["proof"], last_proof["difficulty"])
+# goToRoom(55)
+# last_proof = get_last_proof()
+# print("Got last proof as ", last_proof)
+# find_next_proof()
+
+def continuous_mining(traversal_graph):
+    count = 0
+    start_time = time()
+    while True:
+        print(f"{count} lambda coins found in {time() - start_time} seconds")
+        room_to_mine = find_wishing_well(traversal_graph)
+        goToRoom(room_to_mine)
+        # last_proof = get_last_proof()
+        # print("Got last proof as ", last_proof)
+        mine_response = find_next_proof()
+        print(f'Response from mining: {mine_response}')
+        count +=1
+
+continuous_mining(traversal_graph)
+# print(get_lambda_coin_balance())
