@@ -687,66 +687,66 @@ init_response = get_init_response()
 traversal_graph.vertices[init_response['room_id']
                          ]['items'] = init_response['items']
 
-counter = 0
-start_time = time()
-# # bfs lookng for path to rooms with 'small treasure'
-while encumbrance < 7:
-    # bfs lookng for path to rooms with 'small treasure'
-    to_treasure = traversal_graph.bfs(
-        init_response, 'items', 'small treasure')
-    for move in to_treasure:
-        make_wise_move(move, init_response,
-                       check_status_response, traversal_graph)
-        counter += 1
-        print(f'{counter} moves made in {time() - start_time} seconds.')
-        init_response = get_init_response()
-        traversal_graph.vertices[init_response['room_id']
-                                 ]['items'] = init_response['items']
-        # for each item in room
-        for item in init_response['items']:
-            # if item contains 'treasure'
-            if 'treasure' in item:
-                # examine it
-                examine_response = examine_item(item)
-                print(f'EXAMINE RESPONSE: {examine_response}')
-                # take it
-                take_item_response = take_item(item)
-                init_response = get_init_response()
-                traversal_graph.vertices[init_response['room_id']
-                                         ]['items'] = init_response['items']
-                check_status_response = check_status()
-                print(
-                    f'CHECK STATUS RESPONSE: {check_status_response}')
-                # make sure it's not too much to carry
-                encumbrance = check_status_response['encumbrance']
-                # if so, break and go sell at the shop
-                if encumbrance >= 7:
-                    break
-        if encumbrance >= 7:
-            break
+# counter = 0
+# start_time = time()
+# # # bfs lookng for path to rooms with 'small treasure'
+# while encumbrance < 7:
+#     # bfs lookng for path to rooms with 'small treasure'
+#     to_treasure = traversal_graph.bfs(
+#         init_response, 'items', 'small treasure')
+#     for move in to_treasure:
+#         make_wise_move(move, init_response,
+#                        check_status_response, traversal_graph)
+#         counter += 1
+#         print(f'{counter} moves made in {time() - start_time} seconds.')
+#         init_response = get_init_response()
+#         traversal_graph.vertices[init_response['room_id']
+#                                  ]['items'] = init_response['items']
+#         # for each item in room
+#         for item in init_response['items']:
+#             # if item contains 'treasure'
+#             if 'treasure' in item:
+#                 # examine it
+#                 examine_response = examine_item(item)
+#                 print(f'EXAMINE RESPONSE: {examine_response}')
+#                 # take it
+#                 take_item_response = take_item(item)
+#                 init_response = get_init_response()
+#                 traversal_graph.vertices[init_response['room_id']
+#                                          ]['items'] = init_response['items']
+#                 check_status_response = check_status()
+#                 print(
+#                     f'CHECK STATUS RESPONSE: {check_status_response}')
+#                 # make sure it's not too much to carry
+#                 encumbrance = check_status_response['encumbrance']
+#                 # if so, break and go sell at the shop
+#                 if encumbrance >= 7:
+#                     break
+#         if encumbrance >= 7:
+#             break
 
-find_transmogrifer(traversal_graph)
+# find_transmogrifer(traversal_graph)
 
-check_status_response = check_status()
-print(f'check status response: {check_status_response}')
-treasure = check_status_response['inventory']
-for item in treasure:
-    if item == 'small treasure' or item == 'tiny treasure':
-        transmogriphy_response = transmogrify(item)
-        print(f'Check Transmogripher responce: {transmogriphy_response}')
-print(get_init_response())
-print(get_lambda_coin_balance())
-print(check_status())
-
-
-# wear('well-crafted boots')
-# wear('nice jacket')
 # check_status_response = check_status()
 # print(f'check status response: {check_status_response}')
+# treasure = check_status_response['inventory']
+# for item in treasure:
+#     if item == 'small treasure' or item == 'tiny treasure':
+#         transmogriphy_response = transmogrify(item)
+#         print(f'Check Transmogripher responce: {transmogriphy_response}')
+# print(get_init_response())
+# print(get_lambda_coin_balance())
+# print(check_status())
 
-# warp = warp()
-# print(f'CHECK WARP RESPONSE: {warp}')
-# check_status_response = check_status()
-# print(f'CHECK STATUS RESPONSE: {check_status_response}')
-# init_response = get_init_response()
-# print(f'CHECK INIT RESPONSE: {init_response}')
+
+wear('nice boots')
+wear('nice jacket')
+check_status_response = check_status()
+print(f'check status response: {check_status_response}')
+
+warp = warp()
+print(f'CHECK WARP RESPONSE: {warp}')
+check_status_response = check_status()
+print(f'CHECK STATUS RESPONSE: {check_status_response}')
+init_response = get_init_response()
+print(f'CHECK INIT RESPONSE: {init_response}')

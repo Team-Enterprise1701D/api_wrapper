@@ -6,8 +6,9 @@ from dark_room_map_rooms import dark_island_map
 import hashlib
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
-my_name = 'Hannah Tuttle'
-token = "Token 5740acca65a9d61760e99fb06308fe18cbf29a3c"
+my_name = '[Brett Madrid]'
+token = "Token e4e970f3235624c19c5e184bd2eadbd897ecc8d4"
+
 
 class Queue():
     def __init__(self):
@@ -147,7 +148,7 @@ def fly(move, init_response, traversal_graph):
 def dash(move, init_response, traversal_graph):
     dash_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/dash/"
     dash_headers = {"Content-Type": "application/json",
-                    "Authorization":token}
+                    "Authorization": token}
     move_direction = move[0]
     starting_room = init_response['room_id']
     next_room_ids = []
@@ -246,7 +247,7 @@ def check_status():
 def change_name(name):
     change_name_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/"
     change_name_headers = {"Content-Type": "application/json",
-                           "Authorization":token}
+                           "Authorization": token}
     change_name_payload = {"name": name, "confirm": "aye"}
     change_name_response = json.loads(requests.post(
         change_name_endpoint, data=json.dumps(change_name_payload), headers=change_name_headers).content)
@@ -358,6 +359,7 @@ def transmogrify(item):
     sleep(transmogrify_response['cooldown'])
     return transmogrify_response
 
+
 def examine_item(item):
     examine_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/"
     examine_headers = {"Content-Type": "application/json",
@@ -368,6 +370,7 @@ def examine_item(item):
     sleep(examine_response['cooldown'])
     return examine_response
 
+
 def get_lambda_coin_balance():
     lambda_coin_balance_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/"
     lambda_coin_balance_headers = {
@@ -377,6 +380,7 @@ def get_lambda_coin_balance():
     sleep(lambda_coin_balance_response['cooldown'])
     return lambda_coin_balance_response
 
+
 def warp():
     warp_endpoint = "https://lambda-treasure-hunt.herokuapp.com/api/adv/warp/"
     warp_headers = {
@@ -385,6 +389,7 @@ def warp():
         warp_endpoint, headers=warp_headers).content)
     sleep(warp_response['cooldown'])
     return warp_response
+
 
 traversal_graph = Traversal_Graph()
 traversal_graph.vertices = dark_island_map
@@ -422,11 +427,11 @@ def goToRoom(destinationRoom):
 def find_wishing_well(traversal_graph):
     init_response = get_init_response()
     check_status_response = check_status()
-    wishing_well =  None
+    wishing_well = None
     # first get a set of the locations of all shrines
     for vertex in traversal_graph.vertices:
         if 'Wishing' in traversal_graph.vertices[vertex]['title']:
-            wishing_well  = vertex
+            wishing_well = vertex
             break
 
     if not wishing_well:
@@ -434,7 +439,8 @@ def find_wishing_well(traversal_graph):
         return
 
     print("Look for wishing well ", wishing_well)
-    to_wishing_well = traversal_graph.bfs(init_response, 'room_id', wishing_well)
+    to_wishing_well = traversal_graph.bfs(
+        init_response, 'room_id', wishing_well)
     counter = 0
     for move in to_wishing_well:
         # make move
@@ -443,7 +449,8 @@ def find_wishing_well(traversal_graph):
         counter += 1
         print(f'{counter} moves made.')  # to let me know it's running!
         init_response = get_init_response()
-        traversal_graph.vertices[init_response['room_id']]['items'] = init_response['items']
+        traversal_graph.vertices[init_response['room_id']
+                                 ]['items'] = init_response['items']
     wish_response = examine_item("WELL")
     description = wish_response['description']
     print(f'CHECK WELL RESPONSE: {wish_response}')
@@ -467,8 +474,7 @@ def continuous_snitch_finding(traversal_graph):
         take_item('golden snitch')
         status = check_status()
         print('STATUS:', status)
-        count +=1
+        count += 1
+
 
 continuous_snitch_finding(traversal_graph)
-
-
