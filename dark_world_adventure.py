@@ -2,7 +2,7 @@ import requests
 import json
 from time import sleep, time
 import random
-from map_rooms import island_map
+from dark_room_map_rooms import dark_island_map
 import hashlib
 
 movement_dict = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
@@ -386,134 +386,38 @@ def warp():
     sleep(warp_response['cooldown'])
     return warp_response
 
-
 traversal_graph = Traversal_Graph()
-traversal_graph.vertices = island_map
+traversal_graph.vertices = dark_island_map
 
-# I am commenting this section
+# *******************uncomment when you have at least 7 lamnda coins*************************
 
-# check_status_response = check_status()
-# print(f'CHECK STATUS RESPONSE: {check_status_response}')
-# name = check_status_response['name']
-# gold = check_status_response['gold']
-# encumbrance = check_status_response['encumbrance']
-# init_response = get_init_response()
-# traversal_graph.vertices[init_response['room_id']
-#                          ]['items'] = init_response['items']
-
-# counter = 0
-# start_time = time()
-# # until I get my new name
-# while name != my_name:
-#     # while I don't have enought to buy my new name
-#     while gold < 1000:
-#         # I can only carry so much at a time
-#         while encumbrance < 7:
-#             # bfs lookng for path to rooms with 'small treasure'
-#             to_treasure = traversal_graph.bfs(
-#                 init_response, 'items', 'small treasure')
-#             for move in to_treasure:
-#                 make_wise_move(move, init_response,
-#                                check_status_response, traversal_graph)
-#                 counter += 1
-#                 print(f'{counter} moves made in {time() - start_time} seconds.')
-#                 init_response = get_init_response()
-#                 traversal_graph.vertices[init_response['room_id']
-#                                          ]['items'] = init_response['items']
-#                 # for each item in room
-#                 for item in init_response['items']:
-#                     # if item contains 'treasure'
-#                     if 'treasure' in item:
-#                         # examine it
-#                         examine_response = examine_item(item)
-#                         print(f'EXAMINE RESPONSE: {examine_response}')
-#                         # take it
-#                         take_item_response = take_item(item)
-#                         init_response = get_init_response()
-#                         traversal_graph.vertices[init_response['room_id']
-#                                                  ]['items'] = init_response['items']
-#                         check_status_response = check_status()
-#                         print(
-#                             f'CHECK STATUS RESPONSE: {check_status_response}')
-#                         # make sure it's not too much to carry
-#                         encumbrance = check_status_response['encumbrance']
-#                         # if so, break and go sell at the shop
-#                         if encumbrance >= 7:
-#                             break
-#                 if encumbrance >= 7:
-#                     break
-#         # get path to shop
-#         to_shop = traversal_graph.bfs(init_response, 'title', 'Shop')
-#         for move in to_shop:
-#             make_wise_move(move, init_response,
-#                            check_status_response, traversal_graph)
-#             counter += 1
-#             print(f'{counter} moves made in {time() - start_time} seconds.')
-#             init_response = get_init_response()
-#             traversal_graph.vertices[init_response['room_id']
-#                                      ]['items'] = init_response['items']
-#         # when arrived at the shop...
-#         if init_response['title'] == 'Shop':
-#             check_status_response = check_status()
-#             for item in check_status_response['inventory']:
-#                 # for all items that are 'treasure'
-#                 if 'treasure' in item:
-#                     sell_item_response = sell_item(item)
-#                     print(f'SELL ITEM RESPONSE: {sell_item_response}')
-#                     check_status_response = check_status()
-#                     print(f'CHECK STATUS RESPONSE: {check_status_response}')
-#                     gold = check_status_response['gold']
-#                     encumbrance = check_status_response['encumbrance']
-#     # now that I have enough gold, on to name_changer
-#     to_name_changer = traversal_graph.bfs(
-#         init_response, 'description', "change_name")
-#     for move in to_name_changer:
-#         make_wise_move(move, init_response,
-#                        check_status_response, traversal_graph)
-#         counter += 1
-#         print(f'{counter} moves made in {time() - start_time} seconds.')
-#         init_response = get_init_response()
-#         traversal_graph.vertices[init_response['room_id']
-#                                  ]['items'] = init_response['items']
-#     # if successfully changed name, print new status
-#     if "change_name" in init_response['description']:
-#         change_name_response = change_name(my_name)
-#         print(f"CHANGE NAME RESPONSE: {change_name_response}")
-#         check_status_response = check_status()
-#         print(f'CHECK STATUS RESPONSE: {check_status_response}')
+check_status_response = check_status()
+print(f'CHECK STATUS RESPONSE: {check_status_response}')
+encumbrance = check_status_response['encumbrance']
+init_response = get_init_response()
+print(f'CHECK INIT RESPONSE: {init_response}')
 
 
-def find_shrines(traversal_graph):
+def goToRoom(destinationRoom):
     init_response = get_init_response()
+    print("Init response : ", init_response)
+
     check_status_response = check_status()
-    shrines = set()
-    # first get a set of the locations of all shrines
-    for vertex in traversal_graph.vertices:
-        if 'shrine' in traversal_graph.vertices[vertex]['description']:
-            shrines.add(vertex)
+    print("Current status ", check_status_response)
 
-    while len(shrines) > 0:
-        counter = 0
-        # now pass shrine set to our bfs method to search
-        to_shrine = traversal_graph.bfs(init_response, 'room_id', shrines)
-        for move in to_shrine:
-            # make move
-            make_wise_move(move, init_response,
-                           check_status_response, traversal_graph)
-            counter += 1
-            print(f'{counter} moves made.')  # to let me know it's running!
-            init_response = get_init_response()
-            traversal_graph.vertices[init_response['room_id']
-                                     ]['items'] = init_response['items']
-        if 'shrine' in init_response['description']:
-            pray_response = pray()
-            print(f"PRAY RESPONSE: {pray_response}")
-            check_status_response = check_status()
-            print(f'CHECK STATUS RESPONSE: {check_status_response}')
-            shrines.remove(init_response['room_id'])
+    counter = 0
+    to_room = traversal_graph.bfs(init_response, 'room_id', destinationRoom)
+    for move in to_room:
+        # make move
+        make_wise_move(move, init_response,
+                       check_status_response, traversal_graph)
+        counter += 1
+        print(f'{counter} moves made.')  # to let me know it's running!
+        init_response = get_init_response()
 
+    init_response = get_init_response()
+    print("Init response : ", init_response)
 
-# find_shrines(traversal_graph)
 
 def find_wishing_well(traversal_graph):
     init_response = get_init_response()
@@ -549,204 +453,22 @@ def find_wishing_well(traversal_graph):
     return int(room_to_mine)
 
 # find_wishing_well(traversal_graph)
-print ("New Status", check_status())
-
-def takeItemFromCurrentRoom():
-    init_response = get_init_response()
-    print("Init response : ", init_response)
-    check_status_response = check_status()
-    print("Current status ", check_status_response)
-
-    for item in init_response['items']:
-        print("Taking item : ", item)
-        take_item(item)
-
-def examineItemInCurrentRoom():
-    init_response = get_init_response()
-    print("Init response : ", init_response)
-    check_status_response = check_status()
-    print("Current status ", check_status_response)
-
-    #'EXAMINE WELL, FIND WEALTH', So examine "WELL"
-    examine_response = examine_item("WELL")
-    print(f'EXAMINE RESPONSE: {examine_response}')
-
-def goToRoom(destinationRoom):
-    init_response = get_init_response()
-    print("Init response : ", init_response)
-
-    check_status_response = check_status()
-    print("Current status ", check_status_response)
-
-    counter = 0
-    to_room = traversal_graph.bfs(init_response, 'room_id', destinationRoom)
-    for move in to_room:
-        # make move
-        make_wise_move(move, init_response,
-                       check_status_response, traversal_graph)
-        counter += 1
-        print(f'{counter} moves made.')  # to let me know it's running!
-        init_response = get_init_response()
-
-    init_response = get_init_response()
-    print("Init response : ", init_response)
 
 
-def find_next_proof():
-    guess_check = 0
-
-    while guess_check == 0:
-        get_proof = get_last_proof()
-        print("Got last proof as ", get_proof)
-        last_proof = get_proof["proof"]
-        difficulty_level = get_proof["difficulty"]
-        proof = random.randint(0, 9999999999999999)
-        while True:
-            # print("Try proof", proof)
-            # h = hash((last_proof, proof))
-            guess = f'{last_proof}{proof}'.encode()
-            guess_hash = hashlib.sha256(guess).hexdigest()
-            if guess_hash[:difficulty_level] == "0"*difficulty_level:
-                break
-            proof += 1
-        
-        mine_response = mine(proof)
-        print("Found proof ", guess_hash, proof)
-        print("Mine response", mine_response)
-        if len(mine_response['errors']) > 0:
-            print('Sleeping...')
-            sleep(mine_response['cooldown'])
-            print('Continuing to mine...')
-        elif mine_response['messages'][0] == 'New Block Forged':
-            guess_check = 1
-
-    return get_lambda_coin_balance()
-
-# find_wishing_well(traversal_graph)
-# takeItemFromCurrentRoom()
-# examineItemInCurrentRoom()
-
-# goToRoom(1)
-# last_proof = get_last_proof()
-# print("Got last proof as ", last_proof)
-# find_next_proof()
-
-def continuous_mining(traversal_graph):
+def continuous_snitch_finding(traversal_graph):
     count = 0
     start_time = time()
     while True:
-        print(f"{count} lambda coins found in {time() - start_time} seconds")
+        print(f"{count} snitches found in {time() - start_time} seconds")
         room_to_mine = find_wishing_well(traversal_graph)
         goToRoom(room_to_mine)
-        # last_proof = get_last_proof()
-        # print("Got last proof as ", last_proof)
-        mine_response = find_next_proof()
-        print(f'Response from mining: {mine_response}')
+        item_response = examine_item('golden snitch')
+        print('ITEM RESPONSE', item_response)
+        take_item('golden snitch')
+        status = check_status()
+        print('STATUS:', status)
         count +=1
 
-# continuous_mining(traversal_graph)
-# print(get_lambda_coin_balance())
+continuous_snitch_finding(traversal_graph)
 
 
-
-def find_transmogrifer(traversal_graph):
-    init_response = get_init_response()
-    check_status_response = check_status()
-    transmogrifer =  None
-    # first get a set of the location of transmogripher.
-    for vertex in traversal_graph.vertices:
-        # print('Room_titles', traversal_graph.vertices[vertex]['title'])
-        if 'Transmogriphier' in traversal_graph.vertices[vertex]['title']:
-            transmogrifer  = vertex
-            break
-
-    if not transmogrifer:
-        print("Could not find transmogripher")
-        return
-
-
-    print("Look for Transmogripher ", transmogrifer)
-    to_transmogripher = traversal_graph.bfs(init_response, 'room_id', transmogrifer)
-    print(f'to transmogrifer: {to_transmogripher}')
-    counter = 0
-    
-    for move in to_transmogripher:
-        make_wise_move(move, init_response,
-                    check_status_response, traversal_graph)
-
-
-        counter += 1
-        print(f'{counter} moves made.')  # to let me know it's running!
-
-
-# *******************uncomment when you have at least 7 lamnda coins*************************
-# check_status_response = check_status()
-# print(f'CHECK STATUS RESPONSE: {check_status_response}')
-# name = check_status_response['name']
-# gold = check_status_response['gold']
-# encumbrance = check_status_response['encumbrance']
-# init_response = get_init_response()
-# traversal_graph.vertices[init_response['room_id']
-#                          ]['items'] = init_response['items']
-
-# counter = 0
-# start_time = time()
-# # bfs lookng for path to rooms with 'small treasure'
-# to_treasure = traversal_graph.bfs(
-#     init_response, 'items', 'small treasure')
-# for move in to_treasure:
-#     make_wise_move(move, init_response,
-#                     check_status_response, traversal_graph)
-#     counter += 1
-#     print(f'{counter} moves made in {time() - start_time} seconds.')
-#     init_response = get_init_response()
-#     traversal_graph.vertices[init_response['room_id']
-#                                 ]['items'] = init_response['items']
-#     # for each item in room
-#     for item in init_response['items']:
-#         # if item contains 'treasure'
-#         if 'treasure' in item:
-#             # examine it
-#             examine_response = examine_item(item)
-#             print(f'EXAMINE RESPONSE: {examine_response}')
-#             # take it
-#             take_item_response = take_item(item)
-#             init_response = get_init_response()
-#             traversal_graph.vertices[init_response['room_id']
-#                                         ]['items'] = init_response['items']
-#             check_status_response = check_status()
-#             print(
-#                 f'CHECK STATUS RESPONSE: {check_status_response}')
-#             # make sure it's not too much to carry
-#             encumbrance = check_status_response['encumbrance']
-#             # if so, break and go sell at the shop
-#             if encumbrance >= 7:
-#                 break
-#     if encumbrance >= 7:
-#         break
-
-# find_transmogrifer(traversal_graph)
-
-# check_status_response = check_status()
-# print(f'check status response: {check_status_response}')
-# treasure = check_status_response['inventory']
-# for item in treasure:   
-#     if item == 'small treasure' or item == 'tiny treasure':
-#         transmogriphy_response = transmogrify(item)
-#         print(f'Check Transmogripher responce: {transmogriphy_response}')
-# print(get_init_response())
-# print(get_lambda_coin_balance())
-
-
-
-# wear('well-crafted boots')
-# wear('nice jacket')
-# check_status_response = check_status()
-# print(f'check status response: {check_status_response}')
-
-# warp = warp()
-# print(f'CHECK WARP RESPONSE: {warp}')
-# check_status_response = check_status()
-# print(f'CHECK STATUS RESPONSE: {check_status_response}')
-# init_response = get_init_response()
-# print(f'CHECK INIT RESPONSE: {init_response}')
